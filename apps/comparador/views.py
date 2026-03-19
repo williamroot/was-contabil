@@ -1,8 +1,10 @@
-"""View DRF para comparação de modalidades CAPAG vs TPV.
+"""Views para comparação de modalidades CAPAG vs TPV.
 
-View é FINA — delega ao service.
+Views são FINAS — delegam ao service.
 """
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -34,3 +36,9 @@ class CompararView(APIView):
 
         response_serializer = ComparacaoResponseSerializer(resultado)
         return Response(response_serializer.data, status=status.HTTP_200_OK)
+
+
+class ComparadorPageView(LoginRequiredMixin, TemplateView):
+    """Pagina do comparador de modalidades."""
+
+    template_name = "comparador/comparacao.html"
