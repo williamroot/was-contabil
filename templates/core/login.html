@@ -27,9 +27,9 @@
 
     <!-- Botoes Social Login -->
     <div class="space-y-3">
-      {% if socialaccount_providers %}
+      {% load socialaccount %}
       <!-- Google -->
-      <a href="{% url 'socialaccount_login' %}?process=login&provider=google"
+      <a href="{% provider_login_url 'google' %}"
          class="w-full inline-flex items-center justify-center gap-3 rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-4 py-2.5 text-sm font-medium text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800 transition-all duration-200">
         <svg class="h-5 w-5" viewBox="0 0 24 24">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -40,8 +40,8 @@
         Entrar com Google
       </a>
 
-      <!-- Microsoft -->
-      <a href="{% url 'socialaccount_login' %}?process=login&provider=microsoft"
+      <!-- Microsoft / Outlook -->
+      <a href="{% provider_login_url 'microsoft' %}"
          class="w-full inline-flex items-center justify-center gap-3 rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-4 py-2.5 text-sm font-medium text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800 transition-all duration-200">
         <svg class="h-5 w-5" viewBox="0 0 21 21">
           <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
@@ -61,8 +61,6 @@
           <span class="bg-white dark:bg-surface-800 px-3 text-surface-400 dark:text-surface-500">ou</span>
         </div>
       </div>
-      {% endif %}
-
       <!-- Form email/senha -->
       <form method="post" action="{% url 'account_login' %}" class="space-y-4">
         {% csrf_token %}
@@ -93,15 +91,11 @@
                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2.5 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 dark:placeholder-surface-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
         </div>
 
-        <div class="flex items-center justify-between">
+        <div class="flex items-center">
           <label class="inline-flex items-center gap-2 cursor-pointer">
             <input type="checkbox" name="remember" class="h-4 w-4 rounded border-surface-300 dark:border-surface-600 text-brand-500 focus:ring-brand-500">
             <span class="text-sm text-surface-600 dark:text-surface-400">Lembrar-me</span>
           </label>
-          <a href="{% url 'account_reset_password' %}"
-             class="text-sm font-medium text-brand-600 dark:text-brand-400 hover:text-brand-500 transition-colors duration-200">
-            Esqueceu a senha?
-          </a>
         </div>
 
         <button type="submit"

@@ -156,8 +156,38 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_VERIFICATION = "optional"
+ACCOUNT_PASSWORD_RESET_ON_GET = False
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
+
+# OAuth Providers (Google + Microsoft)
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APPS": [
+            {
+                "client_id": os.environ.get("GOOGLE_CLIENT_ID", ""),
+                "secret": os.environ.get("GOOGLE_CLIENT_SECRET", ""),
+            }
+        ],
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {"access_type": "online"},
+        "OAUTH_PKCE_ENABLED": True,
+    },
+    "microsoft": {
+        "APPS": [
+            {
+                "client_id": os.environ.get("MICROSOFT_CLIENT_ID", ""),
+                "secret": os.environ.get("MICROSOFT_CLIENT_SECRET", ""),
+                "settings": {
+                    "tenant": "common",
+                },
+            }
+        ],
+        "SCOPE": ["openid", "profile", "email"],
+    },
+}
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # django-rq
 RQ_QUEUES = {
