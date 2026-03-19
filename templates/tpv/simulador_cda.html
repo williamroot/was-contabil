@@ -38,7 +38,7 @@
       <div x-show="showNova" x-cloak class="mt-3 p-3 rounded-lg border border-brand-200 dark:border-brand-800 bg-brand-50/50 dark:bg-brand-900/10">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <input type="text" x-model="nova.nome" placeholder="Razao social" class="rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400">
-          <input type="text" x-model="nova.cnpj" placeholder="CNPJ" class="rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400">
+          <input type="text" x-model="nova.cnpj" placeholder="00.000.000/0000-00" data-mask="cnpj" class="rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400">
           <button type="button" @click="fetch('/api/v1/empresas/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':document.querySelector('[name=csrfmiddlewaretoken]')?.value||''},body:JSON.stringify(nova)}).then(r=>r.json()).then(e=>{empresas.push(e);empresaId=e.id;form.nome=e.nome;form.cpf_cnpj=e.cnpj;form.empresa_id=e.id;showNova=false;nova={nome:'',cnpj:'',porte:'ME/EPP',honorarios_percentual:0}})" class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600 transition-colors">Salvar</button>
         </div>
       </div>
@@ -53,7 +53,7 @@
       </div>
       <div>
         <label for="cpf_cnpj" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">CPF/CNPJ</label>
-        <input type="text" id="cpf_cnpj" name="cpf_cnpj" x-model="form.cpf_cnpj"
+        <input type="text" id="cpf_cnpj" name="cpf_cnpj" x-model="form.cpf_cnpj" data-mask="cpf-cnpj"
                class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200"
                placeholder="000.000.000-00">
       </div>

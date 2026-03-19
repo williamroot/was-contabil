@@ -102,7 +102,7 @@
           <label for="passivo_rfb" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
             Passivo RFB (R$)
           </label>
-          <input type="number" id="passivo_rfb" name="passivo_rfb" min="0" step="0.01" placeholder="0,00" required
+          <input type="text" id="passivo_rfb" name="passivo_rfb" placeholder="0,00" data-mask="moeda" required
                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 dark:placeholder-surface-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
         </div>
 
@@ -111,7 +111,7 @@
           <label for="capag_60m" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
             CAPAG Presumida 60m (R$)
           </label>
-          <input type="number" id="capag_60m" name="capag_60m" min="0" step="0.01" placeholder="0,00" required
+          <input type="text" id="capag_60m" name="capag_60m" placeholder="0,00" data-mask="moeda" required
                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 dark:placeholder-surface-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
         </div>
 
@@ -120,7 +120,7 @@
           <label for="passivo_pgfn" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
             Passivo PGFN (R$)
           </label>
-          <input type="number" id="passivo_pgfn" name="passivo_pgfn" min="0" step="0.01" placeholder="0,00" value="0"
+          <input type="text" id="passivo_pgfn" name="passivo_pgfn" min="0" step="0.01" placeholder="0,00" value="0"
                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 dark:placeholder-surface-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
         </div>
 
@@ -180,22 +180,22 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
           <label for="prev_principal" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Principal (R$)</label>
-          <input type="number" id="prev_principal" name="previdenciario_principal" min="0" step="0.01" placeholder="0,00" required
+          <input type="text" id="prev_principal" name="previdenciario_principal" placeholder="0,00" data-mask="moeda"
                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
         </div>
         <div>
           <label for="prev_multa" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Multa (R$)</label>
-          <input type="number" id="prev_multa" name="previdenciario_multa" min="0" step="0.01" placeholder="0,00" required
+          <input type="text" id="prev_multa" name="previdenciario_multa" placeholder="0,00" data-mask="moeda"
                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
         </div>
         <div>
           <label for="prev_juros" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Juros (R$)</label>
-          <input type="number" id="prev_juros" name="previdenciario_juros" min="0" step="0.01" placeholder="0,00" required
+          <input type="text" id="prev_juros" name="previdenciario_juros" placeholder="0,00" data-mask="moeda"
                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
         </div>
         <div>
           <label for="prev_encargos" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Encargos (R$)</label>
-          <input type="number" id="prev_encargos" name="previdenciario_encargos" min="0" step="0.01" placeholder="0,00" required
+          <input type="text" id="prev_encargos" name="previdenciario_encargos" placeholder="0,00" data-mask="moeda"
                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
         </div>
       </div>
@@ -215,22 +215,22 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
           <label for="trib_principal" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Principal (R$)</label>
-          <input type="number" id="trib_principal" name="tributario_principal" min="0" step="0.01" placeholder="0,00" required
+          <input type="text" id="trib_principal" name="tributario_principal" placeholder="0,00" data-mask="moeda"
                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
         </div>
         <div>
           <label for="trib_multa" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Multa (R$)</label>
-          <input type="number" id="trib_multa" name="tributario_multa" min="0" step="0.01" placeholder="0,00" required
+          <input type="text" id="trib_multa" name="tributario_multa" placeholder="0,00" data-mask="moeda"
                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
         </div>
         <div>
           <label for="trib_juros" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Juros (R$)</label>
-          <input type="number" id="trib_juros" name="tributario_juros" min="0" step="0.01" placeholder="0,00" required
+          <input type="text" id="trib_juros" name="tributario_juros" placeholder="0,00" data-mask="moeda"
                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
         </div>
         <div>
           <label for="trib_encargos" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Encargos (R$)</label>
-          <input type="number" id="trib_encargos" name="tributario_encargos" min="0" step="0.01" placeholder="0,00" required
+          <input type="text" id="trib_encargos" name="tributario_encargos" placeholder="0,00" data-mask="moeda"
                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
         </div>
       </div>

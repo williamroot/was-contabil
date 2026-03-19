@@ -33,12 +33,11 @@
           <label for="valor_total_divida" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
             Valor Total da Divida (R$)
           </label>
-          <input type="number"
+          <input type="text"
                  id="valor_total_divida"
                  name="valor_total_divida"
-                 min="0"
-                 step="0.01"
                  placeholder="0,00"
+                 data-mask="moeda"
                  required
                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 dark:placeholder-surface-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
         </div>

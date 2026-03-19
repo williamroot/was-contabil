@@ -62,6 +62,9 @@
   <!-- Alpine.js 3 -->
   <script defer src="https://unpkg.com/alpinejs@3.14.8/dist/cdn.min.js"></script>
 
+  <!-- IMask.js (mascaras de input) -->
+  <script src="https://unpkg.com/imask@7.6.1/dist/imask.min.js"></script>
+
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
 
@@ -83,6 +86,7 @@
 
   <!-- Custom JS -->
   <script src="{% static 'js/app.js' %}"></script>
+  <script src="{% static 'js/masks.js' %}"></script>
 
   {% block extra_js %}{% endblock %}
 </body>
