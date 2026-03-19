@@ -254,14 +254,18 @@
     <!-- ===== FOOTER ===== -->
     <footer class="bg-gray-900 text-gray-400 border-t border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="flex items-center space-x-3 mb-4 md:mb-0">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-3">
                     <img src="{% static 'favicon.svg' %}" alt="" class="w-6 h-6">
                     <span class="text-sm"><strong class="text-white">WAS Contabil</strong> — Simulador de Transacao Tributaria</span>
                 </div>
-                <p class="text-sm">
-                    &copy; 2026 <strong class="text-white">WAS Solucoes em Tecnologia</strong>. Todos os direitos reservados.
-                </p>
+                <div class="flex items-center gap-4 text-sm">
+                    <a href="https://home.was.dev.br" target="_blank" rel="noopener" class="hover:text-white transition-colors">WAS Solucoes</a>
+                    <span class="text-gray-700">|</span>
+                    <a href="https://home.was.dev.br" target="_blank" rel="noopener" class="hover:text-white transition-colors">Contato</a>
+                    <span class="text-gray-700">|</span>
+                    <span>&copy; 2026 WAS</span>
+                </div>
             </div>
         </div>
     </footer>

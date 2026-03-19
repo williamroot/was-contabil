@@ -1,14 +1,28 @@
+{% load static %}
 <!-- Footer responsivo -->
 <footer class="bg-surface-100 dark:bg-surface-900 border-t border-surface-200 dark:border-surface-800 mt-auto">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
-    <div class="flex flex-col items-center gap-2 sm:flex-row sm:justify-between">
-      <p class="text-sm text-surface-500 dark:text-surface-400">
-        <span class="font-semibold text-brand-500 dark:text-brand-400">WAS Contábil</span>
-        &mdash; Simulador de Transação Tributária
-      </p>
-      <p class="text-xs text-surface-400 dark:text-surface-500">
-        &copy; {{ current_year|default:"2026" }} Todos os direitos reservados.
-      </p>
+    <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+      <div class="flex items-center gap-2">
+        <img src="{% static 'favicon.svg' %}" alt="" class="h-5 w-5 opacity-60">
+        <span class="text-sm text-surface-500 dark:text-surface-400">
+          <span class="font-semibold text-brand-500 dark:text-brand-400">WAS Contabil</span>
+          &mdash; Simulador de Transacao Tributaria
+        </span>
+      </div>
+      <div class="flex items-center gap-4 text-xs text-surface-400 dark:text-surface-500">
+        <a href="https://home.was.dev.br" target="_blank" rel="noopener"
+           class="hover:text-brand-500 dark:hover:text-brand-400 transition-colors">
+          WAS Solucoes
+        </a>
+        <span class="text-surface-300 dark:text-surface-700">|</span>
+        <a href="https://home.was.dev.br" target="_blank" rel="noopener"
+           class="hover:text-brand-500 dark:hover:text-brand-400 transition-colors">
+          Contato
+        </a>
+        <span class="text-surface-300 dark:text-surface-700">|</span>
+        <span>&copy; 2026 WAS</span>
+      </div>
     </div>
   </div>
 </footer>
