@@ -17,36 +17,47 @@
 
   <!-- Identificacao -->
   <div class="bg-white dark:bg-surface-800 rounded-xl shadow-sm border border-surface-200 dark:border-surface-700 p-4 sm:p-6">
-    <h2 class="text-lg font-semibold text-surface-800 dark:text-surface-200 mb-4">Identificacao</h2>
+    <h2 class="text-lg font-semibold text-surface-800 dark:text-surface-200 mb-4">Identificação</h2>
 
-    <!-- Empresa (opcional) -->
-    <div class="mb-4" x-data="{ empresas: [], empresaId: '', showNova: false, nova: {nome:'',cnpj:'',porte:'ME/EPP',honorarios_percentual:0} }"
-         x-init="fetch('/api/v1/empresas/').then(r=>r.json()).then(d=>{empresas=d.results||d})">
-      <label class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Empresa <span class="text-surface-400 font-normal">(opcional — preenche nome e CNPJ automaticamente)</span></label>
+    <!-- Empresa -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Empresa</label>
       <div class="flex gap-2">
-        <select x-model="empresaId" @change="if(empresaId){let e=empresas.find(x=>x.id==empresaId);if(e){form.nome=e.nome;form.cpf_cnpj=e.cnpj;form.empresa_id=e.id}}"
+        <select x-model="empresaId"
+                @change="if(empresaId && empresaId !== 'manual'){let e=listaEmpresas.find(x=>x.id==empresaId);if(e){form.nome=e.nome;form.cpf_cnpj=e.cnpj;form.empresa_id=e.id}} else {form.empresa_id=''}"
                 class="flex-1 rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
-          <option value="">Preencher manualmente</option>
-          <template x-for="emp in empresas" :key="emp.id">
+          <option value="">Selecione ou crie uma empresa</option>
+          <template x-for="emp in listaEmpresas" :key="emp.id">
             <option :value="emp.id" x-text="emp.nome + ' — ' + emp.cnpj"></option>
           </template>
+          <option value="manual">Preencher manualmente</option>
         </select>
-        <button type="button" @click="showNova=!showNova" class="flex-shrink-0 rounded-lg border border-surface-300 dark:border-surface-600 px-3 py-2 text-sm text-surface-600 dark:text-surface-400 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors" title="Cadastrar nova empresa">
+        <button type="button" @click="showNovaEmpresa=!showNovaEmpresa"
+                class="flex-shrink-0 rounded-lg border border-surface-300 dark:border-surface-600 px-3 py-2 text-sm text-surface-600 dark:text-surface-400 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors" title="Cadastrar nova empresa">
           <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
         </button>
       </div>
-      <div x-show="showNova" x-cloak class="mt-3 p-3 rounded-lg border border-brand-200 dark:border-brand-800 bg-brand-50/50 dark:bg-brand-900/10">
+      <!-- Mini form nova empresa -->
+      <div x-show="showNovaEmpresa" x-cloak class="mt-3 p-3 rounded-lg border border-brand-200 dark:border-brand-800 bg-brand-50/50 dark:bg-brand-900/10">
+        <p class="text-xs text-surface-400 mb-2">Digite o CNPJ para preencher automaticamente:</p>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <input type="text" x-model="nova.nome" placeholder="Razao social" class="rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400">
-          <input type="text" x-model="nova.cnpj" placeholder="00.000.000/0000-00" data-mask="cnpj"
-                 @blur="cnpjLookup($el, (d) => { nova.nome=d.nome; form.nome=d.nome; form.cpf_cnpj=nova.cnpj; })"
+          <input type="text" x-model="novaEmpresaTPV.cnpj" placeholder="00.000.000/0000-00" data-mask="cnpj"
+                 @input="let d=($el.value||'').replace(/\D/g,'');if(d.length===14){cnpjLookup($el,(r)=>{novaEmpresaTPV.nome=r.nome;novaEmpresaTPV.porte=r.porte})}"
                  class="rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400">
-          <button type="button" @click="fetch('/api/v1/empresas/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':document.querySelector('[name=csrfmiddlewaretoken]')?.value||''},body:JSON.stringify(nova)}).then(r=>r.json()).then(e=>{empresas.push(e);empresaId=e.id;form.nome=e.nome;form.cpf_cnpj=e.cnpj;form.empresa_id=e.id;showNova=false;nova={nome:'',cnpj:'',porte:'ME/EPP',honorarios_percentual:0}})" class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600 transition-colors">Salvar</button>
+          <input type="text" x-model="novaEmpresaTPV.nome" placeholder="Razão social"
+                 class="rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400">
+          <button type="button" @click="
+            fetch('/api/v1/empresas/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':document.querySelector('[name=csrfmiddlewaretoken]')?.value||''},body:JSON.stringify(novaEmpresaTPV)})
+            .then(r=>r.json()).then(e=>{
+              listaEmpresas.push(e);empresaId=e.id;form.nome=e.nome;form.cpf_cnpj=e.cnpj;form.empresa_id=e.id;
+              showNovaEmpresa=false;novaEmpresaTPV={nome:'',cnpj:'',porte:'ME/EPP',honorarios_percentual:0}
+            })" class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600 transition-colors">Salvar</button>
         </div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- Campos manuais (só aparecem quando "Preencher manualmente" selecionado) -->
+    <div x-show="empresaId === 'manual'" x-cloak class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
       <div>
         <label for="nome" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Nome</label>
         <input type="text" id="nome" name="nome_contribuinte" x-model="form.nome"
@@ -59,11 +70,15 @@
                class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200"
                placeholder="000.000.000-00">
       </div>
+    </div>
+
+    <!-- Tipo/Porte e SM — sempre visíveis -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div>
         <label for="tipo_porte" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Tipo/Porte</label>
         <select id="tipo_porte" name="tipo_porte" x-model="form.tipo_porte"
                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
-          <option value="PF">Pessoa Fisica</option>
+          <option value="PF">Pessoa Física</option>
           <option value="ME">Microempresa</option>
           <option value="EPP">Empresa de Pequeno Porte</option>
         </select>
@@ -362,10 +377,18 @@ function tpvSimulador() {
       parcelas_entrada: 1,
       parcelas_saldo: 7,
     },
+    empresaId: '',
+    listaEmpresas: [],
+    showNovaEmpresa: false,
+    novaEmpresaTPV: { nome: '', cnpj: '', porte: 'ME/EPP', honorarios_percentual: 0 },
     cdas: [],
     novaCda: { numero: '', valor: '', data_inscricao: '' },
     showImportModal: false,
     loading: false,
+    async init() {
+      const res = await fetch('/api/v1/empresas/');
+      if (res.ok) { const d = await res.json(); this.listaEmpresas = d.results || d; }
+    },
     descontoSelecionado: null,
     faixasDesconto: [
       { parcelas: 7, desconto: 50, melhor: true },
