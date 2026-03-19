@@ -123,3 +123,103 @@ class TestImportarCDAsView:
         response = api_client.post(self.URL, {}, format="multipart")
 
         assert response.status_code == 400
+
+
+@pytest.fixture
+def empresa(organization):
+    """Cria empresa de teste."""
+    from apps.empresas.models import Empresa
+
+    return Empresa.objects.create(
+        organization=organization,
+        nome="Sitio Verde LTDA",
+        cnpj="03.523.294/0001-24",
+        porte="ME/EPP",
+        honorarios_percentual=20,
+    )
+
+
+@pytest.mark.django_db
+class TestTPVComEmpresa:
+    """Testes de vinculacao empresa <-> TPV."""
+
+    URL = "/api/v1/tpv/simular/"
+
+    def test_simular_com_empresa_preenche_nome_cnpj(self, api_client, empresa):
+        """Quando empresa_id informado, nome e CNPJ vem da empresa."""
+        payload = {
+            "empresa_id": str(empresa.id),
+            "tipo_porte": "ME",
+            "salario_minimo": "1621.00",
+            "parcelas_entrada": 1,
+            "parcelas_saldo": 7,
+            "cdas": [
+                {"numero": "CDA-001", "valor": "50000.00", "data_inscricao": "2024-01-15"},
+            ],
+        }
+        response = api_client.post(self.URL, payload, content_type="application/json")
+        assert response.status_code == 200
+
+        from apps.tpv.models import SimulacaoTPV
+
+        sim = SimulacaoTPV.objects.last()
+        assert sim.empresa == empresa
+        assert sim.nome_contribuinte == "Sitio Verde LTDA"
+        assert sim.cpf_cnpj == "03.523.294/0001-24"
+
+    def test_simular_sem_empresa_usa_campos_manuais(self, api_client):
+        """Sem empresa_id, nome e CNPJ vem do payload."""
+        payload = {
+            "nome_contribuinte": "Manual da Silva",
+            "cpf_cnpj": "111.222.333-44",
+            "tipo_porte": "PF",
+            "salario_minimo": "1621.00",
+            "parcelas_entrada": 1,
+            "parcelas_saldo": 7,
+            "cdas": [
+                {"numero": "CDA-001", "valor": "50000.00", "data_inscricao": "2024-01-15"},
+            ],
+        }
+        response = api_client.post(self.URL, payload, content_type="application/json")
+        assert response.status_code == 200
+
+        from apps.tpv.models import SimulacaoTPV
+
+        sim = SimulacaoTPV.objects.last()
+        assert sim.empresa is None
+        assert sim.nome_contribuinte == "Manual da Silva"
+        assert sim.cpf_cnpj == "111.222.333-44"
+
+    def test_simular_com_empresa_de_outra_org_ignora(self, api_client):
+        """Empresa de outra org nao vincula (seguranca multi-tenant)."""
+        from apps.core.models import Organization
+        from apps.empresas.models import Empresa
+
+        outra_org = Organization.objects.create(name="Outra Org", slug="outra-org")
+        empresa_outra = Empresa.objects.create(
+            organization=outra_org,
+            nome="Empresa Alheia",
+            cnpj="99.999.999/0001-99",
+            porte="DEMAIS",
+        )
+        payload = {
+            "empresa_id": str(empresa_outra.id),
+            "nome_contribuinte": "Fallback",
+            "cpf_cnpj": "000.000.000-00",
+            "tipo_porte": "PF",
+            "salario_minimo": "1621.00",
+            "parcelas_entrada": 1,
+            "parcelas_saldo": 7,
+            "cdas": [
+                {"numero": "CDA-001", "valor": "50000.00", "data_inscricao": "2024-01-15"},
+            ],
+        }
+        response = api_client.post(self.URL, payload, content_type="application/json")
+        assert response.status_code == 200
+
+        from apps.tpv.models import SimulacaoTPV
+
+        sim = SimulacaoTPV.objects.last()
+        # Empresa de outra org nao vincula — usa fallback manual
+        assert sim.empresa is None
+        assert sim.nome_contribuinte == "Fallback"
