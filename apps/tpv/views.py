@@ -82,11 +82,24 @@ class SimularTPVView(APIView):
         resultado = calcular_tpv(inp)
         resultado_dict = _resultado_to_dict(resultado)
 
+        # Vincular empresa (se informada)
+        empresa = None
+        empresa_id = data.get("empresa_id")
+        if empresa_id:
+            from apps.empresas.models import Empresa
+
+            empresa = Empresa.objects.filter(id=empresa_id, organization=request.organization).first()
+
+        # Nome/CNPJ: prioriza empresa cadastrada
+        nome = empresa.nome if empresa else data.get("nome_contribuinte", "")
+        cnpj = empresa.cnpj if empresa else data.get("cpf_cnpj", "")
+
         # Persistir
         simulacao = SimulacaoTPV.objects.create(
             organization=request.organization,
-            nome_contribuinte=data.get("nome_contribuinte", ""),
-            cpf_cnpj=data.get("cpf_cnpj", ""),
+            empresa=empresa,
+            nome_contribuinte=nome,
+            cpf_cnpj=cnpj,
             tipo_porte=data["tipo_porte"],
             salario_minimo=data["salario_minimo"],
             parcelas_entrada=data["parcelas_entrada"],

@@ -11,6 +11,7 @@ from django.db import models
 from django.utils import timezone
 
 from apps.core.models import Organization, UUIDModel
+from apps.empresas.models import Empresa
 
 TIPO_PORTE_CHOICES = [
     ("PF", "Pessoa Física"),
@@ -33,6 +34,14 @@ class SimulacaoTPV(UUIDModel):
         Organization,
         on_delete=models.CASCADE,
         related_name="simulacoes_tpv",
+    )
+    empresa = models.ForeignKey(
+        Empresa,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="simulacoes_tpv",
+        help_text="Empresa vinculada (opcional). Se preenchida, nome/cnpj vem da empresa.",
     )
     nome_contribuinte = models.CharField(max_length=300, blank=True, default="")
     cpf_cnpj = models.CharField(max_length=18, blank=True, default="")

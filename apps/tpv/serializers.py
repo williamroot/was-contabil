@@ -37,17 +37,23 @@ class CDARequestSerializer(serializers.Serializer):
 class TPVSimulacaoRequestSerializer(serializers.Serializer):
     """Serializer de entrada para simulação TPV completa."""
 
+    empresa_id = serializers.UUIDField(
+        required=False,
+        allow_null=True,
+        default=None,
+        help_text="UUID da empresa cadastrada (opcional).",
+    )
     nome_contribuinte = serializers.CharField(
         max_length=300,
         required=False,
         default="",
-        help_text="Nome do contribuinte.",
+        help_text="Nome do contribuinte (ignorado se empresa_id preenchido).",
     )
     cpf_cnpj = serializers.CharField(
         max_length=18,
         required=False,
         default="",
-        help_text="CPF ou CNPJ do contribuinte.",
+        help_text="CPF ou CNPJ (ignorado se empresa_id preenchido).",
     )
     tipo_porte = serializers.CharField(
         help_text="Tipo do contribuinte: PF, ME ou EPP.",
