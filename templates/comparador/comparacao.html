@@ -132,7 +132,7 @@
           </div>
           <div>
             <p class="text-sm font-semibold text-surface-900 dark:text-white">
-              Recomendacao: <span class="text-brand-600 dark:text-brand-400" x-text="resultado.recomendacao === 'TPV' ? 'Transacao de Pequeno Valor' : 'Capacidade de Pagamento'"></span>
+              Recomendacao: <span class="text-brand-600 dark:text-brand-400" x-text="resultado.recomendacao === 'TPV' ? 'Transação de Pequeno Valor' : 'Capacidade de Pagamento'"></span>
             </p>
             <p class="text-xs text-surface-500" x-show="parseFloat(resultado.economia_diferenca) > 0">
               Economia adicional de <span class="font-semibold text-green-600" x-text="'R$ ' + parseFloat(resultado.economia_diferenca).toLocaleString('pt-BR', {minimumFractionDigits: 2})"></span> em relacao a outra modalidade

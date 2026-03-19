@@ -47,7 +47,7 @@
                       :class="emp.porte === 'ME/EPP' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-300'"
                       x-text="emp.porte"></span>
               </td>
-              <td class="px-4 py-3 text-sm text-surface-500" x-text="emp.honorarios_percentual + '%'"></td>
+              <td class="px-4 py-3 text-sm text-surface-500" x-text="parseFloat(emp.honorarios_percentual || 0).toFixed(0) + '%'"></td>
               <td class="px-4 py-3 text-right">
                 <button @click="excluir(emp.id)" class="text-red-500 hover:text-red-700 text-sm transition-colors">Excluir</button>
               </td>
@@ -183,10 +183,15 @@ function empresas() {
       }
     },
     async criar() {
+      const payload = { ...this.novaEmpresa };
+      // Limpar valor do honorarios (mascara usa virgula, API espera numero)
+      if (typeof payload.honorarios_percentual === 'string') {
+        payload.honorarios_percentual = parseFloat(payload.honorarios_percentual.replace(/\./g, '').replace(',', '.')) || 0;
+      }
       const res = await fetch('/api/v1/empresas/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.csrfToken() },
-        body: JSON.stringify(this.novaEmpresa),
+        body: JSON.stringify(payload),
       });
       if (res.ok) {
         this.showModal = false;
