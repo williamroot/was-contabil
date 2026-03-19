@@ -6,7 +6,7 @@
 
       <!-- Logo -->
       <div class="flex-shrink-0">
-        <a href="{% url 'core:home' %}" class="flex items-center gap-2.5 group">
+        <a href="{% url 'core:dashboard' %}" class="flex items-center gap-2.5 group">
           <img src="{% static 'favicon.svg' %}" alt="" class="h-8 w-8">
           <span class="text-brand-400 font-bold text-lg tracking-tight group-hover:text-brand-300 transition-colors duration-200">
             WAS Contábil
@@ -16,7 +16,7 @@
 
       <!-- Desktop nav links -->
       <div class="hidden md:flex md:items-center md:gap-1">
-        <a href="{% url 'core:home' %}"
+        <a href="{% url 'core:dashboard' %}"
            class="rounded-lg px-3 py-2 text-sm font-medium text-surface-300 hover:bg-surface-800 hover:text-white transition-all duration-200
                   {% if request.resolver_match.url_name == 'home' %}bg-surface-800 text-white{% endif %}">
           Início
@@ -131,7 +131,7 @@
        class="border-t border-surface-800 md:hidden"
        x-cloak>
     <div class="space-y-1 px-4 py-3">
-      <a href="{% url 'core:home' %}"
+      <a href="{% url 'core:dashboard' %}"
          class="block rounded-lg px-3 py-2 text-base font-medium text-surface-300 hover:bg-surface-800 hover:text-white transition-all duration-200
                 {% if request.resolver_match.url_name == 'home' %}bg-surface-800 text-white{% endif %}">
         Início

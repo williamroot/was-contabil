@@ -38,10 +38,28 @@ def anon_client():
 
 
 @pytest.mark.django_db
-class TestHomeView:
-    """Testa HomeView — pagina inicial."""
+class TestLandingView:
+    """Testa LandingView — landing page publica."""
 
     URL = "/"
+
+    def test_anonimo_ve_landing(self, anon_client):
+        """Visitante anonimo ve a landing page."""
+        response = anon_client.get(self.URL)
+        assert response.status_code == 200
+
+    def test_autenticado_redireciona_para_dashboard(self, authed_client):
+        """Usuario logado eh redirecionado para o dashboard."""
+        response = authed_client.get(self.URL)
+        assert response.status_code == 302
+        assert "/dashboard/" in response.url
+
+
+@pytest.mark.django_db
+class TestHomeView:
+    """Testa HomeView — dashboard (area logada)."""
+
+    URL = "/dashboard/"
 
     def test_redireciona_para_login_se_nao_autenticado(self, anon_client):
         """Visitante anonimo eh redirecionado para login."""
@@ -50,7 +68,7 @@ class TestHomeView:
         assert "login" in response.url or "accounts" in response.url
 
     def test_autenticado_retorna_200(self, authed_client):
-        """Usuarios autenticados veem a home (status 200)."""
+        """Usuarios autenticados veem o dashboard (status 200)."""
         response = authed_client.get(self.URL)
         assert response.status_code == 200
 

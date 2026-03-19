@@ -3,6 +3,7 @@ from django.urls import path
 from apps.core.views import (
     HomeView,
     InvitePageView,
+    LandingView,
     LoginPageView,
     OrganizationSetupPageView,
 )
@@ -10,7 +11,8 @@ from apps.core.views import (
 app_name = "core"
 
 urlpatterns = [
-    path("", HomeView.as_view(), name="home"),
+    path("", LandingView.as_view(), name="landing"),
+    path("dashboard/", HomeView.as_view(), name="dashboard"),
     path("login/", LoginPageView.as_view(), name="login"),
     path(
         "convite/<str:token>/",

@@ -1,0 +1,270 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WAS Contabil — Simulador de Transacao Tributaria Federal</title>
+    <meta name="description" content="Plataforma inteligente para simulacao de transacao tributaria federal (PGFN). Calcule descontos, parcelamentos e compare modalidades com transparencia total dos calculos.">
+    <meta name="keywords" content="transacao tributaria, PGFN, simulador, CAPAG, TPV, desconto divida federal, parcelamento, contabilidade">
+    <meta name="robots" content="index, follow">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="WAS Contabil — Simulador de Transacao Tributaria Federal">
+    <meta property="og:description" content="Simule transacoes tributarias com IA. Descontos de ate 70%, parcelamento em ate 145 meses, rating CAPAG automatico.">
+    <meta property="og:site_name" content="WAS Contabil">
+    <meta property="og:locale" content="pt_BR">
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    brand: { 50:'#fdf8e8',100:'#faefc5',200:'#f5dc8a',300:'#efc94c',400:'#d4a843',500:'#b8922e',600:'#9a7a24',700:'#7c621d',800:'#5e4a16',900:'#40320f' },
+                    dark: { 800:'#1a1a2e',900:'#16213e' },
+                },
+            },
+        },
+    }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>body{font-family:'Inter',system-ui,sans-serif}</style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased">
+
+    <!-- ===== HERO ===== -->
+    <section class="relative overflow-hidden bg-gradient-to-br from-dark-800 via-dark-900 to-dark-800 text-white">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 w-72 h-72 bg-brand-400 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-10 right-10 w-96 h-96 bg-brand-300 rounded-full blur-3xl"></div>
+        </div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="flex-1 text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start space-x-4 mb-8">
+                        <img src="{% static 'logo.svg' %}" alt="WAS Contabil" class="w-16 h-16">
+                        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">WAS Contabil</h1>
+                    </div>
+                    <p class="text-xl md:text-2xl text-brand-200 mb-6 leading-relaxed">
+                        Simulador inteligente de transacao tributaria federal para escritorios de contabilidade e advocacia.
+                    </p>
+                    <p class="text-gray-400 mb-10 text-lg">
+                        Calcule descontos de ate 70%, compare modalidades e gere relatorios com transparencia total dos calculos e referencias legais.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                        <a href="/accounts/login/" class="inline-flex items-center justify-center px-8 py-3 bg-brand-400 text-dark-900 font-semibold rounded-lg shadow-lg hover:bg-brand-300 transition-all duration-200 hover:shadow-xl">
+                            Acessar Plataforma →
+                        </a>
+                        <a href="#funcionalidades" class="inline-flex items-center justify-center px-8 py-3 border-2 border-white/20 text-white font-semibold rounded-lg hover:bg-white/10 transition-all duration-200">
+                            Como Funciona
+                        </a>
+                    </div>
+                </div>
+                <div class="flex-1 hidden lg:flex justify-center">
+                    <div class="relative w-80 h-80">
+                        <div class="absolute inset-0 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10 p-8 flex flex-col justify-center space-y-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-brand-400/20 rounded-lg flex items-center justify-center">
+                                    <span class="text-brand-300 font-bold text-sm">D</span>
+                                </div>
+                                <div>
+                                    <div class="h-2.5 w-28 bg-white/20 rounded"></div>
+                                    <div class="h-2 w-16 bg-white/10 rounded mt-1.5"></div>
+                                </div>
+                                <span class="ml-auto text-xs text-green-400 font-mono">-70%</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-green-400/20 rounded-lg flex items-center justify-center">
+                                    <span class="text-green-300 text-xs">R$</span>
+                                </div>
+                                <div>
+                                    <div class="h-2.5 w-24 bg-white/20 rounded"></div>
+                                    <div class="h-2 w-20 bg-white/10 rounded mt-1.5"></div>
+                                </div>
+                                <span class="ml-auto text-xs text-green-400 font-mono">145x</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-400/20 rounded-lg flex items-center justify-center">
+                                    <span class="text-blue-300 text-xs">📄</span>
+                                </div>
+                                <div>
+                                    <div class="h-2.5 w-32 bg-white/20 rounded"></div>
+                                    <div class="h-2 w-14 bg-white/10 rounded mt-1.5"></div>
+                                </div>
+                                <span class="ml-auto text-xs text-green-400 font-mono">PDF</span>
+                            </div>
+                            <div class="pt-3 border-t border-white/10">
+                                <div class="flex justify-between text-xs text-gray-400">
+                                    <span>Economia simulada</span>
+                                    <span class="text-green-400 font-semibold">R$ 2.162,00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FUNCIONALIDADES ===== -->
+    <section id="funcionalidades" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Funcionalidades</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Tudo que seu escritorio precisa para simular transacoes tributarias com precisao e agilidade.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gray-50 rounded-xl p-8 hover:shadow-lg transition-shadow duration-300 border border-gray-100">
+                    <div class="w-14 h-14 bg-brand-100 rounded-xl flex items-center justify-center mb-6">
+                        <span class="text-2xl">🏛️</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Simulacao CAPAG</h3>
+                    <p class="text-gray-600 leading-relaxed">Decomposicao em Principal/Multa/Juros/Encargos com rating automatico (A/B/C/D), 3 categorias de debitos e honorarios de exito.</p>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-8 hover:shadow-lg transition-shadow duration-300 border border-gray-100">
+                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+                        <span class="text-2xl">📄</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Transacao Pequeno Valor</h3>
+                    <p class="text-gray-600 leading-relaxed">Validacao por CDA individual (60 SM + 1 ano), importacao CSV/Excel, descontos de 30% a 50% e dashboard de elegibilidade futura.</p>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-8 hover:shadow-lg transition-shadow duration-300 border border-gray-100">
+                    <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-6">
+                        <span class="text-2xl">⚖️</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Comparador de Modalidades</h3>
+                    <p class="text-gray-600 leading-relaxed">Compare TPV vs Capacidade de Pagamento lado a lado e descubra qual modalidade e mais vantajosa para seu cliente.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== COMO FUNCIONA ===== -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Como Funciona</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Transparencia total em cada passo do calculo, com referencia legal.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-10 h-10 bg-brand-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                            <span class="text-brand-600 font-bold">1</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-1">Informe os dados da divida</h4>
+                            <p class="text-gray-600">Valor total, composicao (P/M/J/E), CAPAG presumida e porte da empresa. Ou importe CDAs via Excel.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="w-10 h-10 bg-brand-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                            <span class="text-brand-600 font-bold">2</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-1">Calculos automaticos com IA</h4>
+                            <p class="text-gray-600">Rating CAPAG, desconto por componente (principal nunca tem desconto), entrada, parcelamento e correcao SELIC em tempo real.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="w-10 h-10 bg-brand-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                            <span class="text-brand-600 font-bold">3</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-1">Relatorio com referencias legais</h4>
+                            <p class="text-gray-600">Cada passo do calculo mostra a formula e o artigo da lei. Exporte PDF resumido ou completo para peticoes.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+                    <h4 class="font-semibold text-gray-900 mb-6 text-center">Exemplo de Transparencia</h4>
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-brand-400 pl-4 py-2">
+                            <div class="text-sm font-medium text-gray-800">Passo 1: Rating CAPAG</div>
+                            <div class="text-xs text-gray-500 font-mono mt-1">CAPAG R$ 1.000 / Passivo R$ 9.800 = 0.102 → Rating D</div>
+                            <div class="text-xs text-brand-600 mt-1">Portaria PGFN 6.757/2022, art. 24</div>
+                        </div>
+                        <div class="border-l-4 border-brand-400 pl-4 py-2">
+                            <div class="text-sm font-medium text-gray-800">Passo 2: Desconto 70% sobre M+J+E</div>
+                            <div class="text-xs text-gray-500 font-mono mt-1">Multa R$ 300 × 70% = R$ 210 desconto</div>
+                            <div class="text-xs text-brand-600 mt-1">Lei 13.988/2020, art. 11, §3° (ME/EPP)</div>
+                        </div>
+                        <div class="border-l-4 border-red-400 pl-4 py-2">
+                            <div class="text-sm font-medium text-gray-800">Principal: SEM desconto</div>
+                            <div class="text-xs text-gray-500 font-mono mt-1">R$ 1.000 → R$ 1.000 (intacto)</div>
+                            <div class="text-xs text-red-600 mt-1">Lei 13.988/2020, art. 11, §2°, I (vedacao)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== BASE LEGAL ===== -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Base Legal</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Todos os calculos sao baseados na legislacao vigente.</p>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-gradient-to-br from-brand-50 to-white rounded-xl p-6 border border-brand-100 hover:shadow-md transition-shadow">
+                    <h3 class="text-lg font-semibold mb-2">Lei 13.988/2020</h3>
+                    <p class="text-gray-600 text-sm">Transacao tributaria federal. Descontos de ate 65% (geral) ou 70% (ME/EPP).</p>
+                </div>
+                <div class="bg-gradient-to-br from-blue-50 to-white rounded-xl p-6 border border-blue-100 hover:shadow-md transition-shadow">
+                    <h3 class="text-lg font-semibold mb-2">Portaria PGFN 6.757/2022</h3>
+                    <p class="text-gray-600 text-sm">Classificacao CAPAG (A/B/C/D), entrada de 6%, parcela minima e modalidades.</p>
+                </div>
+                <div class="bg-gradient-to-br from-purple-50 to-white rounded-xl p-6 border border-purple-100 hover:shadow-md transition-shadow">
+                    <h3 class="text-lg font-semibold mb-2">Edital PGDAU 11/2025</h3>
+                    <p class="text-gray-600 text-sm">Modalidades vigentes ate 29/05/2026. TPV com descontos de 30% a 50%.</p>
+                </div>
+                <div class="bg-gradient-to-br from-green-50 to-white rounded-xl p-6 border border-green-100 hover:shadow-md transition-shadow">
+                    <h3 class="text-lg font-semibold mb-2">CF/88, art. 195, §11</h3>
+                    <p class="text-gray-600 text-sm">Limite constitucional de 60 meses para debitos previdenciarios.</p>
+                </div>
+                <div class="bg-gradient-to-br from-amber-50 to-white rounded-xl p-6 border border-amber-100 hover:shadow-md transition-shadow">
+                    <h3 class="text-lg font-semibold mb-2">SELIC em Tempo Real</h3>
+                    <p class="text-gray-600 text-sm">Correcao monetaria via API do Banco Central (serie 4390). Atualizado automaticamente.</p>
+                </div>
+                <div class="bg-gradient-to-br from-red-50 to-white rounded-xl p-6 border border-red-100 hover:shadow-md transition-shadow">
+                    <h3 class="text-lg font-semibold mb-2">Vedacao Legal</h3>
+                    <p class="text-gray-600 text-sm">Principal NUNCA tem desconto (art. 11, §2°, I). Nosso sistema garante isso automaticamente.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CTA ===== -->
+    <section class="py-20 bg-gradient-to-br from-dark-800 to-dark-900 text-white">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <img src="{% static 'logo.svg' %}" alt="WAS Contabil" class="w-20 h-20 mx-auto mb-6">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Comece a simular agora</h2>
+            <p class="text-lg text-gray-400 mb-10 leading-relaxed">
+                Acesse a plataforma com sua conta Google ou Microsoft e faca sua primeira simulacao em minutos.
+            </p>
+            <a href="/accounts/login/" class="inline-flex items-center justify-center px-10 py-4 bg-brand-400 text-dark-900 font-bold rounded-lg shadow-xl hover:bg-brand-300 transition-all duration-200 hover:shadow-2xl text-lg">
+                Acessar Plataforma →
+            </a>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="bg-gray-900 text-gray-400 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                    <img src="{% static 'favicon.svg' %}" alt="" class="w-6 h-6">
+                    <span class="text-sm"><strong class="text-white">WAS Contabil</strong> — Simulador de Transacao Tributaria</span>
+                </div>
+                <p class="text-sm">
+                    &copy; 2026 <strong class="text-white">WAS Solucoes em Tecnologia</strong>. Todos os direitos reservados.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

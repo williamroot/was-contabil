@@ -6,11 +6,27 @@ from django.views.generic import TemplateView
 from apps.core.models import Invitation
 
 
-class HomeView(LoginRequiredMixin, TemplateView):
-    """Página inicial do WAS Contábil.
+class LandingView(TemplateView):
+    """Landing page publica do WAS Contabil.
 
-    Redireciona para login se o usuário não está autenticado.
-    Exibe dashboard com links para os módulos principais.
+    Se o usuario ja esta logado, redireciona para o dashboard.
+    """
+
+    template_name = "core/landing.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            from django.shortcuts import redirect
+
+            return redirect("core:dashboard")
+        return super().dispatch(request, *args, **kwargs)
+
+
+class HomeView(LoginRequiredMixin, TemplateView):
+    """Dashboard do WAS Contabil (area logada).
+
+    Redireciona para login se o usuario nao esta autenticado.
+    Exibe dashboard com links para os modulos principais.
     """
 
     template_name = "core/home.html"
