@@ -21,9 +21,14 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
 
 # Cloudflare Tunnel: HTTPS termina no Cloudflare, chega como HTTP no nginx
 # Confiar no header X-Forwarded-Proto do Cloudflare
+# Cloudflare Tunnel: HTTPS termina no Cloudflare, chega como HTTP no nginx
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
+
+# Desabilitar SSL redirect — Cloudflare Tunnel ja garante HTTPS externamente
+# Internamente (Docker network) trafego e HTTP puro
+SECURE_SSL_REDIRECT = False
 
 # CSRF: confiar nos dominios do Cloudflare
 CSRF_TRUSTED_ORIGINS = [f"https://{host.strip()}" for host in ALLOWED_HOSTS if host.strip()]
