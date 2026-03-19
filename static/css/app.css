@@ -72,6 +72,11 @@ textarea {
 .htmx-request.htmx-indicator {
   opacity: 1 !important;
   width: auto !important;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* Pulse animation for loading */
