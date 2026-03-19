@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }"
+      x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))"
+      :class="{ 'dark': darkMode }">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}WAS Contábil{% endblock %}</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS 3 (CDN — MVP) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fdf8e8',
+              100: '#faefc5',
+              200: '#f5dc8a',
+              300: '#efc94c',
+              400: '#d4a843',
+              500: '#b8922e',
+              600: '#9a7a24',
+              700: '#7c621d',
+              800: '#5e4a16',
+              900: '#40320f',
+            },
+            surface: {
+              50: '#fafafa',
+              100: '#f5f5f5',
+              200: '#e5e5e5',
+              300: '#d4d4d4',
+              400: '#a3a3a3',
+              500: '#737373',
+              600: '#525252',
+              700: '#404040',
+              800: '#262626',
+              900: '#171717',
+              950: '#0a0a0a',
+            },
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <!-- HTMX 2 -->
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+
+  <!-- Alpine.js 3 -->
+  <script defer src="https://unpkg.com/alpinejs@3.14.8/dist/cdn.min.js"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="h-full bg-surface-50 dark:bg-surface-950 font-sans text-surface-900 dark:text-surface-100 antialiased">
+
+  {% csrf_token %}
+
+  {% include "components/_navbar.html" %}
+
+  <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8 min-h-[calc(100vh-8rem)]">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include "components/_footer.html" %}
+
+  {% include "components/_toasts.html" %}
+
+  <!-- Custom JS -->
+  <script src="{% static 'js/app.js' %}"></script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!-- Passo a passo do cálculo com referência legal -->
+<!-- Uso: {% include "components/_calculo_detalhe.html" with calculo_detalhes=result.calculo_detalhes %} -->
+{% if calculo_detalhes %}
+<div class="space-y-3">
+  <h3 class="text-base font-semibold text-surface-800 dark:text-surface-200">
+    Detalhamento do Cálculo
+  </h3>
+  {% for passo in calculo_detalhes %}
+  <div class="border-l-4 border-brand-400 pl-4 py-2 bg-white dark:bg-surface-800 rounded-r-lg">
+    <div class="text-sm font-medium text-surface-800 dark:text-surface-200">
+      Passo {{ passo.passo }}: {{ passo.descricao }}
+    </div>
+    <div class="text-xs text-surface-500 dark:text-surface-400 font-mono mt-1">
+      {{ passo.formula }}
+    </div>
+    {% if passo.referencia_legal %}
+    <div class="text-xs text-brand-600 dark:text-brand-400 mt-1">
+      {{ passo.referencia_legal }}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

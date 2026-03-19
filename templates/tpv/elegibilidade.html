@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Elegibilidade Futura — WAS Contabil{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <!-- Header -->
+  <div>
+    <h1 class="text-2xl sm:text-3xl font-bold text-surface-900 dark:text-surface-100">
+      Dashboard de Elegibilidade
+    </h1>
+    <p class="mt-1 text-sm text-surface-500 dark:text-surface-400">
+      Acompanhe CDAs que serao elegiveis para TPV no futuro.
+    </p>
+  </div>
+
+  <!-- Filtro -->
+  <div class="bg-white dark:bg-surface-800 rounded-xl shadow-sm border border-surface-200 dark:border-surface-700 p-4 sm:p-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div>
+        <label for="empresa_select" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+          Empresa / Simulacao
+        </label>
+        <select id="empresa_select" name="empresa"
+                hx-get="{% url 'tpv:page-elegibilidade' %}"
+                hx-target="#elegibilidade-content"
+                hx-swap="innerHTML"
+                hx-indicator="#loading-eleg"
+                hx-include="[name='tipo_impedimento']"
+                class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+          <option value="">Todas</option>
+          {% for sim in simulacoes %}
+          <option value="{{ sim.id }}" {% if selected_id == sim.id|slugify %}selected{% endif %}>
+            {{ sim.nome_contribuinte|default:sim.cpf_cnpj }} — {{ sim.created_at|date:"d/m/Y" }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="tipo_impedimento" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+          Tipo de Impedimento
+        </label>
+        <select id="tipo_impedimento" name="tipo_impedimento"
+                hx-get="{% url 'tpv:page-elegibilidade' %}"
+                hx-target="#elegibilidade-content"
+                hx-swap="innerHTML"
+                hx-indicator="#loading-eleg"
+                hx-include="[name='empresa']"
+                class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+          <option value="">Todos</option>
+          <option value="valor">Valor acima do limite</option>
+          <option value="tempo">Inscricao recente (&lt; 1 ano)</option>
+          <option value="ambos">Valor + Tempo</option>
+        </select>
+      </div>
+      <div class="flex items-end">
+        <svg id="loading-eleg" class="htmx-indicator animate-spin h-5 w-5 text-brand-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div id="elegibilidade-content">
+    <!-- KPIs -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div class="bg-white dark:bg-surface-800 rounded-xl shadow-sm border border-surface-200 dark:border-surface-700 p-4">
+        <p class="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">CDAs Nao Aptas</p>
+        <p class="mt-1 text-2xl font-bold text-surface-900 dark:text-surface-100">
+          {{ total_nao_aptas|default:"0" }}
+        </p>
+      </div>
+      <div class="bg-white dark:bg-surface-800 rounded-xl shadow-sm border border-surface-200 dark:border-surface-700 p-4">
+        <p class="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Proxima Elegibilidade</p>
+        <p class="mt-1 text-2xl font-bold text-brand-600 dark:text-brand-400">
+          {{ proxima_elegibilidade|default:"N/A" }}
+        </p>
+      </div>
+      <div class="bg-white dark:bg-surface-800 rounded-xl shadow-sm border border-surface-200 dark:border-surface-700 p-4">
+        <p class="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Media para Concluir</p>
+        <p class="mt-1 text-2xl font-bold text-surface-900 dark:text-surface-100">
+          {{ media_dias_elegibilidade|default:"N/A" }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Tabela ranking -->
+    <div class="bg-white dark:bg-surface-800 rounded-xl shadow-sm border border-surface-200 dark:border-surface-700">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
+          <thead class="bg-surface-100 dark:bg-surface-800">
+            <tr>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider">CDA</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider">Valor</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider">Inscricao</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider">Motivo</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider">Apta Tempo</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider">Apta Valor</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider">Previsao</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-200 dark:divide-surface-700 bg-white dark:bg-surface-900">
+            {% for cda in cdas_nao_aptas %}
+            <tr class="hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors duration-150">
+              <td class="whitespace-nowrap px-4 py-3 text-sm font-mono text-surface-800 dark:text-surface-200">
+                {{ cda.numero }}
+              </td>
+              <td class="whitespace-nowrap px-4 py-3 text-sm text-right font-mono text-surface-800 dark:text-surface-200">
+                R$ {{ cda.valor|floatformat:2 }}
+              </td>
+              <td class="whitespace-nowrap px-4 py-3 text-sm text-center text-surface-600 dark:text-surface-400">
+                {{ cda.data_inscricao|date:"d/m/Y" }}
+              </td>
+              <td class="px-4 py-3 text-sm text-surface-600 dark:text-surface-400">
+                {{ cda.motivo }}
+              </td>
+              <td class="whitespace-nowrap px-4 py-3 text-center">
+                {% if cda.apta_tempo %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                {% else %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+                {% endif %}
+              </td>
+              <td class="whitespace-nowrap px-4 py-3 text-center">
+                {% if cda.apta_valor %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                {% else %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+                {% endif %}
+              </td>
+              <td class="whitespace-nowrap px-4 py-3 text-sm text-center font-medium text-brand-600 dark:text-brand-400">
+                {{ cda.previsao_elegibilidade|date:"d/m/Y"|default:"N/A" }}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="px-4 py-12 text-center">
+                <p class="text-sm text-surface-500 dark:text-surface-400">
+                  Nenhuma CDA nao apta encontrada.
+                </p>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Aviso -->
+    <div class="mt-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 p-4">
+      <div class="flex items-start gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0 text-yellow-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg>
+        <p class="text-sm text-yellow-700 dark:text-yellow-400">
+          <strong>Atencao:</strong> Estimativas simplificadas para fins de planejamento.
+          Nao consideram correcao pela SELIC nem alteracoes legislativas futuras.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

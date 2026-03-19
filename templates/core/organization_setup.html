@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Configurar Organizacao — WAS Contabil{% endblock %}
+
+{% block extra_head %}
+<style>
+  nav, footer { display: none !important; }
+  main { min-height: 100vh !important; display: flex; align-items: center; justify-content: center; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-md mx-auto px-4">
+  <div class="bg-white dark:bg-surface-800 rounded-2xl shadow-xl border border-surface-200 dark:border-surface-700 p-6 sm:p-8">
+    <!-- Logo -->
+    <div class="text-center mb-6">
+      <h1 class="text-3xl font-bold text-brand-500 dark:text-brand-400 tracking-tight">
+        WAS Contabil
+      </h1>
+    </div>
+
+    <!-- Mensagem -->
+    <div class="text-center mb-6">
+      <h2 class="text-xl font-semibold text-surface-900 dark:text-surface-100">
+        Configurar Organizacao
+      </h2>
+      <p class="mt-2 text-sm text-surface-500 dark:text-surface-400">
+        Crie sua organizacao para comecar a usar o sistema.
+      </p>
+    </div>
+
+    <form method="post" class="space-y-4" x-data="{ nome: '', slug: '' }"
+          x-effect="slug = nome.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')">
+      {% csrf_token %}
+
+      {% if form_errors %}
+      <div class="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-3">
+        {% for error in form_errors %}
+        <p class="text-sm text-red-700 dark:text-red-400">{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div>
+        <label for="nome" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+          Nome da Organizacao
+        </label>
+        <input type="text" id="nome" name="nome" required x-model="nome"
+               placeholder="Ex: Escritorio Silva & Associados"
+               class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2.5 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 dark:placeholder-surface-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+      </div>
+
+      <div>
+        <label for="slug" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+          Slug (identificador unico)
+        </label>
+        <input type="text" id="slug" name="slug" required x-model="slug"
+               placeholder="escritorio-silva"
+               class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2.5 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 dark:placeholder-surface-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        <p class="mt-1 text-xs text-surface-400 dark:text-surface-500">
+          Gerado automaticamente a partir do nome. Pode ser editado.
+        </p>
+      </div>
+
+      <div class="pt-2">
+        <button type="submit"
+                class="w-full rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200">
+          Criar Organizacao
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <p class="mt-6 text-center text-xs text-surface-400 dark:text-surface-500">
+    &copy; 2026 WAS Contabil. Todos os direitos reservados.
+  </p>
+</div>
+{% endblock %}

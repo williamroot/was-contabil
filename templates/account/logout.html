@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Sair — WAS Contabil{% endblock %}
+
+{% block extra_head %}
+<style>
+  nav, footer { display: none !important; }
+  main { min-height: 100vh !important; display: flex; align-items: center; justify-content: center; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-sm mx-auto px-4">
+  <div class="bg-white dark:bg-surface-800 rounded-2xl shadow-xl border border-surface-200 dark:border-surface-700 p-6 sm:p-8 text-center">
+    <!-- Logo -->
+    <div class="mb-6">
+      <h1 class="text-3xl font-bold text-brand-500 dark:text-brand-400 tracking-tight">
+        WAS Contabil
+      </h1>
+    </div>
+
+    <h2 class="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-2">
+      Confirmar saida
+    </h2>
+    <p class="text-sm text-surface-500 dark:text-surface-400 mb-6">
+      Tem certeza que deseja sair do sistema?
+    </p>
+
+    <form method="post" action="{% url 'account_logout' %}">
+      {% csrf_token %}
+      <div class="flex flex-col gap-3">
+        <button type="submit"
+                class="w-full rounded-lg bg-red-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all duration-200">
+          Sair
+        </button>
+        <a href="{% url 'core:home' %}"
+           class="w-full inline-flex items-center justify-center rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 px-4 py-2.5 text-sm font-medium text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 transition-all duration-200">
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

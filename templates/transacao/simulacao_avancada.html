@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}Simulacao Avancada — WAS Contabil{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <!-- Header -->
+  <div>
+    <h1 class="text-2xl sm:text-3xl font-bold text-surface-900 dark:text-surface-100">
+      Simulacao Avancada (CAPAG)
+    </h1>
+    <p class="mt-1 text-sm text-surface-500 dark:text-surface-400">
+      Simulacao completa com decomposicao P/M/J/E, rating CAPAG automatico e honorarios.
+    </p>
+  </div>
+
+  <form hx-post="{% url 'transacao:page-simular-avancado' %}"
+        hx-target="#resultado-avancado"
+        hx-swap="innerHTML"
+        hx-indicator="#loading-avancado"
+        class="space-y-6">
+    {% csrf_token %}
+
+    <!-- Dados Gerais -->
+    <div class="bg-white dark:bg-surface-800 rounded-xl shadow-sm border border-surface-200 dark:border-surface-700 p-4 sm:p-6">
+      <h2 class="text-lg font-semibold text-surface-800 dark:text-surface-200 mb-4">
+        Dados Gerais
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Empresa -->
+        <div class="sm:col-span-2">
+          <label for="empresa_id" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            Empresa
+          </label>
+          <select id="empresa_id"
+                  name="empresa_id"
+                  hx-get="{% url 'transacao:page-simular-avancado' %}"
+                  hx-trigger="load"
+                  hx-target="#empresa_id"
+                  hx-swap="innerHTML"
+                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+            <option value="">Selecione uma empresa (opcional)</option>
+          </select>
+        </div>
+
+        <!-- Passivo RFB -->
+        <div>
+          <label for="passivo_rfb" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            Passivo RFB (R$)
+          </label>
+          <input type="number" id="passivo_rfb" name="passivo_rfb" min="0" step="0.01" placeholder="0,00" required
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 dark:placeholder-surface-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        </div>
+
+        <!-- CAPAG 60m -->
+        <div>
+          <label for="capag_60m" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            CAPAG Presumida 60m (R$)
+          </label>
+          <input type="number" id="capag_60m" name="capag_60m" min="0" step="0.01" placeholder="0,00" required
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 dark:placeholder-surface-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        </div>
+
+        <!-- Passivo PGFN -->
+        <div>
+          <label for="passivo_pgfn" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            Passivo PGFN (R$)
+          </label>
+          <input type="number" id="passivo_pgfn" name="passivo_pgfn" min="0" step="0.01" placeholder="0,00" value="0"
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 dark:placeholder-surface-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        </div>
+
+        <!-- Desconto -->
+        <div>
+          <label for="desconto_escolha" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            Escolha do Desconto
+          </label>
+          <select id="desconto_escolha" name="desconto_escolha"
+                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+            <option value="menor">Menor Desconto (mais conservador)</option>
+            <option value="maior" selected>Maior Desconto (mais agressivo)</option>
+          </select>
+        </div>
+
+        <!-- ME/EPP -->
+        <div>
+          <label class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            Empresa ME/EPP?
+          </label>
+          <div class="flex gap-4 mt-2">
+            <label class="inline-flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="is_me_epp" value="true"
+                     class="h-4 w-4 text-brand-500 border-surface-300 dark:border-surface-600 focus:ring-brand-500">
+              <span class="text-sm text-surface-700 dark:text-surface-300">Sim</span>
+            </label>
+            <label class="inline-flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="is_me_epp" value="false" checked
+                     class="h-4 w-4 text-brand-500 border-surface-300 dark:border-surface-600 focus:ring-brand-500">
+              <span class="text-sm text-surface-700 dark:text-surface-300">Nao</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Honorarios -->
+        <div>
+          <label for="honorarios_percentual" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            Honorarios de Exito (%)
+          </label>
+          <input type="number" id="honorarios_percentual" name="honorarios_percentual" min="0" max="100" step="0.01" value="0" placeholder="0"
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 dark:placeholder-surface-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        </div>
+      </div>
+    </div>
+
+    <!-- Secao Previdenciario -->
+    <div class="bg-white dark:bg-surface-800 rounded-xl shadow-sm border border-surface-200 dark:border-surface-700 p-4 sm:p-6">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900/30 px-3 py-1 text-xs font-semibold text-blue-700 dark:text-blue-400 ring-1 ring-inset ring-blue-600/20 dark:ring-blue-500/30">
+          PREVID
+        </span>
+        <h2 class="text-lg font-semibold text-surface-800 dark:text-surface-200">
+          Debitos Previdenciarios
+        </h2>
+        <span class="text-xs text-surface-400 dark:text-surface-500">(prazo: 60 meses)</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+          <label for="prev_principal" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Principal (R$)</label>
+          <input type="number" id="prev_principal" name="previdenciario_principal" min="0" step="0.01" placeholder="0,00" required
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        </div>
+        <div>
+          <label for="prev_multa" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Multa (R$)</label>
+          <input type="number" id="prev_multa" name="previdenciario_multa" min="0" step="0.01" placeholder="0,00" required
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        </div>
+        <div>
+          <label for="prev_juros" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Juros (R$)</label>
+          <input type="number" id="prev_juros" name="previdenciario_juros" min="0" step="0.01" placeholder="0,00" required
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        </div>
+        <div>
+          <label for="prev_encargos" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Encargos (R$)</label>
+          <input type="number" id="prev_encargos" name="previdenciario_encargos" min="0" step="0.01" placeholder="0,00" required
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        </div>
+      </div>
+    </div>
+
+    <!-- Secao Tributario -->
+    <div class="bg-white dark:bg-surface-800 rounded-xl shadow-sm border border-surface-200 dark:border-surface-700 p-4 sm:p-6">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="inline-flex items-center rounded-full bg-purple-100 dark:bg-purple-900/30 px-3 py-1 text-xs font-semibold text-purple-700 dark:text-purple-400 ring-1 ring-inset ring-purple-600/20 dark:ring-purple-500/30">
+          TRIB
+        </span>
+        <h2 class="text-lg font-semibold text-surface-800 dark:text-surface-200">
+          Debitos Tributarios
+        </h2>
+        <span class="text-xs text-surface-400 dark:text-surface-500">(prazo: 120-145 meses)</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+          <label for="trib_principal" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Principal (R$)</label>
+          <input type="number" id="trib_principal" name="tributario_principal" min="0" step="0.01" placeholder="0,00" required
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        </div>
+        <div>
+          <label for="trib_multa" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Multa (R$)</label>
+          <input type="number" id="trib_multa" name="tributario_multa" min="0" step="0.01" placeholder="0,00" required
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        </div>
+        <div>
+          <label for="trib_juros" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Juros (R$)</label>
+          <input type="number" id="trib_juros" name="tributario_juros" min="0" step="0.01" placeholder="0,00" required
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        </div>
+        <div>
+          <label for="trib_encargos" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Encargos (R$)</label>
+          <input type="number" id="trib_encargos" name="tributario_encargos" min="0" step="0.01" placeholder="0,00" required
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        </div>
+      </div>
+    </div>
+
+    <!-- Secao Simples Nacional (opcional) -->
+    <div x-data="{ showSimples: false }" class="bg-white dark:bg-surface-800 rounded-xl shadow-sm border border-surface-200 dark:border-surface-700 p-4 sm:p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/30 px-3 py-1 text-xs font-semibold text-green-700 dark:text-green-400 ring-1 ring-inset ring-green-600/20 dark:ring-green-500/30">
+            SIMPLES
+          </span>
+          <h2 class="text-lg font-semibold text-surface-800 dark:text-surface-200">
+            Simples Nacional
+          </h2>
+          <span class="text-xs text-surface-400 dark:text-surface-500">(opcional)</span>
+        </div>
+        <button type="button" @click="showSimples = !showSimples"
+                class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/20 transition-all duration-200">
+          <span x-text="showSimples ? 'Ocultar' : 'Adicionar'"></span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-200" :class="{ 'rotate-180': showSimples }" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
+      <div x-show="showSimples" x-transition class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+          <label for="simples_principal" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Principal (R$)</label>
+          <input type="number" id="simples_principal" name="simples_principal" min="0" step="0.01" placeholder="0,00" value="0"
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        </div>
+        <div>
+          <label for="simples_multa" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Multa (R$)</label>
+          <input type="number" id="simples_multa" name="simples_multa" min="0" step="0.01" placeholder="0,00" value="0"
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        </div>
+        <div>
+          <label for="simples_juros" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Juros (R$)</label>
+          <input type="number" id="simples_juros" name="simples_juros" min="0" step="0.01" placeholder="0,00" value="0"
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        </div>
+        <div>
+          <label for="simples_encargos" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Encargos (R$)</label>
+          <input type="number" id="simples_encargos" name="simples_encargos" min="0" step="0.01" placeholder="0,00" value="0"
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200">
+        </div>
+      </div>
+    </div>
+
+    <!-- Botao Simular -->
+    <div class="flex justify-end">
+      <button type="submit"
+              class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-8 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200">
+        <svg id="loading-avancado" class="htmx-indicator animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Simular Transacao
+      </button>
+    </div>
+  </form>
+
+  <!-- Resultado -->
+  <div id="resultado-avancado"></div>
+</div>
+{% endblock %}
