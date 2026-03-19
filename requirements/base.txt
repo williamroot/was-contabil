@@ -1,6 +1,7 @@
 Django==5.2.12
 djangorestframework==3.16.1
-django-allauth==65.15.0
+django-allauth[socialaccount]==65.15.0
+requests>=2.31.0
 django-rq==4.0.1
 django-htmx==1.27.0
 django-weasyprint==2.4.0
