@@ -62,12 +62,16 @@ textarea {
    HTMX loading indicator
    ======================================== */
 .htmx-indicator {
-  display: none;
+  opacity: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  transition: opacity 0.2s ease;
 }
 
 .htmx-request .htmx-indicator,
 .htmx-request.htmx-indicator {
-  display: inline-flex;
+  opacity: 1 !important;
+  width: auto !important;
 }
 
 /* Pulse animation for loading */
