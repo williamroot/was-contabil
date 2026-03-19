@@ -52,6 +52,17 @@ help:
 	@echo "  make ps                 - Status dos containers"
 	@echo "  make clean              - Remove containers, volumes e cache"
 	@echo ""
+	@echo "🌐 PRODUCAO (simulador.was.dev.br):"
+	@echo "  make prod-build         - Build imagens de producao"
+	@echo "  make prod-up            - Sobe stack completa (db+redis+web+nginx+cloudflared)"
+	@echo "  make prod-down          - Para stack de producao"
+	@echo "  make prod-logs          - Logs de producao (follow)"
+	@echo "  make prod-migrate       - Roda migrations em producao"
+	@echo "  make prod-seed          - Cria superuser em producao"
+	@echo "  make prod-shell         - Shell Django em producao"
+	@echo "  make prod-restart       - Restart web + worker"
+	@echo "  make prod-ps            - Status dos containers"
+	@echo ""
 
 # ============================================================================
 # BUILD & SETUP
@@ -181,9 +192,63 @@ clean:
 	find . -type f -name "*.pyc" -delete 2>/dev/null || true
 	rm -rf .pytest_cache htmlcov .coverage
 
+# ============================================================================
+# PRODUCAO (simulador.was.dev.br)
+# ============================================================================
+
+PROD_COMPOSE := $(DOCKER_COMPOSE) -f docker-compose.prod.yml
+
+prod-build:
+	$(PROD_COMPOSE) build --parallel
+
+prod-up:
+	$(PROD_COMPOSE) up -d
+	@echo "✅ Stack de producao no ar!"
+	@echo "   Cloudflare Tunnel conectando a simulador.was.dev.br"
+
+prod-down:
+	$(PROD_COMPOSE) down
+
+prod-logs:
+	$(PROD_COMPOSE) logs -f
+
+prod-migrate:
+	$(PROD_COMPOSE) exec web python manage.py migrate
+
+prod-seed:
+	$(PROD_COMPOSE) exec web python manage.py shell -c "\
+from django.contrib.auth import get_user_model; \
+from apps.core.models import Organization, Membership; \
+User = get_user_model(); \
+user, created = User.objects.get_or_create(username='admin', defaults={'email': 'admin@was.dev.br', 'is_staff': True, 'is_superuser': True}); \
+created and user.set_password('TROCAR_ESTA_SENHA') or None; \
+created and user.save(); \
+org, _ = Organization.objects.get_or_create(slug='was-contabil', defaults={'name': 'WAS Contabil'}); \
+Membership.objects.get_or_create(user=user, organization=org, defaults={'is_owner': True}); \
+print('Superuser criado: admin@was.dev.br') if created else print('Ja existe'); \
+"
+
+prod-shell:
+	$(PROD_COMPOSE) exec web python manage.py shell
+
+prod-restart:
+	$(PROD_COMPOSE) restart web worker
+	@echo "✅ Web + Worker reiniciados"
+
+prod-ps:
+	$(PROD_COMPOSE) ps
+
+prod-deploy: prod-build
+	$(PROD_COMPOSE) up -d --force-recreate web worker nginx
+	$(PROD_COMPOSE) exec web python manage.py migrate --noinput
+	$(PROD_COMPOSE) exec web python manage.py collectstatic --noinput
+	@echo "✅ Deploy concluido em simulador.was.dev.br"
+
 .PHONY: help build setup migrate makemigrations createsuperuser seed \
         run runserver shell dbshell urls \
         worker sync-indices \
         test test-v test-cov test-compat test-fast test-app \
         format lint check quality \
-        up down logs ps clean
+        up down logs ps clean \
+        prod-build prod-up prod-down prod-logs prod-migrate prod-seed \
+        prod-shell prod-restart prod-ps prod-deploy

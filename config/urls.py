@@ -2,6 +2,7 @@ import django_rq.urls as rq_urls
 
 from django.contrib import admin
 from django.contrib.admin.views.decorators import staff_member_required
+from django.http import JsonResponse
 from django.urls import include, path
 
 # Proteger todas as views do django-rq com staff_member_required
@@ -9,6 +10,7 @@ for url_pattern in rq_urls.urlpatterns:
     url_pattern.callback = staff_member_required(url_pattern.callback)
 
 urlpatterns = [
+    path("health/", lambda r: JsonResponse({"status": "ok"}), name="health"),
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
     path("convites/", include("apps.core.urls_invitations")),
