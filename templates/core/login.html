@@ -14,15 +14,12 @@
 {% block content %}
 <div class="w-full max-w-sm mx-auto px-4">
 
-  <!-- Logo -->
-  <div class="text-center mb-8">
-    <img src="{% static 'logo.svg' %}" alt="WAS Contabil" class="h-32 w-32 mx-auto mb-4 drop-shadow-2xl">
-  </div>
-
-  <!-- Card -->
+  <!-- Card unico com logo dentro -->
   <div class="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-8">
 
-    <div class="text-center mb-6">
+    <!-- Logo + titulo -->
+    <div class="text-center mb-8">
+      <img src="{% static 'logo.svg' %}" alt="WAS Contabil" class="h-24 w-24 mx-auto mb-4 drop-shadow-2xl">
       <h1 class="text-xl font-semibold text-white tracking-wide">Entrar</h1>
       <p class="mt-1 text-sm text-surface-400">Escolha sua conta para continuar</p>
     </div>
