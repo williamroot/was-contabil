@@ -179,11 +179,11 @@ SOCIALACCOUNT_PROVIDERS = {
                 "client_id": os.environ.get("MICROSOFT_CLIENT_ID", ""),
                 "secret": os.environ.get("MICROSOFT_CLIENT_SECRET", ""),
                 "settings": {
-                    "tenant": "common",
+                    "tenant": "consumers",
                 },
             }
         ],
-        "SCOPE": ["openid", "profile", "email"],
+        "SCOPE": ["openid", "profile", "email", "User.Read"],
     },
 }
 SOCIALACCOUNT_AUTO_SIGNUP = True
