@@ -75,9 +75,20 @@
                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400 transition-colors">
         </div>
         <div>
-          <label class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">CNPJ</label>
+          <label class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            CNPJ
+            <span class="text-xs text-surface-400 font-normal ml-1">(preenche automaticamente)</span>
+          </label>
           <input type="text" x-model="novaEmpresa.cnpj" placeholder="00.000.000/0000-00" data-mask="cnpj"
+                 @blur="cnpjLookup($el, (d) => { novaEmpresa.nome = d.nome; novaEmpresa.porte = d.porte; cnpjInfo = d; })"
                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400 transition-colors">
+          <!-- Info da consulta -->
+          <template x-if="cnpjInfo">
+            <div class="mt-2 p-2 rounded-lg bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 text-xs text-green-700 dark:text-green-400">
+              <span x-text="cnpjInfo.nome"></span> — <span x-text="cnpjInfo.porte_original"></span>
+              <span class="text-green-500 ml-1" x-text="'(' + cnpjInfo.situacao + ')'"></span>
+            </div>
+          </template>
         </div>
         <div>
           <label class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Porte</label>
@@ -114,6 +125,7 @@ function empresas() {
     busca: '',
     showModal: false,
     novaEmpresa: { nome: '', cnpj: '', porte: 'ME/EPP', honorarios_percentual: 0 },
+    cnpjInfo: null,
     csrfToken() {
       return document.querySelector('[name=csrfmiddlewaretoken]')?.value
         || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';

@@ -51,7 +51,8 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <input type="text" x-model="nova.nome" placeholder="Razao social"
                      class="rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400 transition-colors">
-              <input type="text" x-model="nova.cnpj" placeholder="CNPJ"
+              <input type="text" x-model="nova.cnpj" placeholder="00.000.000/0000-00" data-mask="cnpj"
+                     @blur="cnpjLookup($el, (d) => { nova.nome = d.nome; nova.porte = d.porte; })"
                      class="rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400 transition-colors">
               <div class="flex gap-2">
                 <select x-model="nova.porte"
