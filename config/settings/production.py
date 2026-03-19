@@ -26,9 +26,11 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
 
-# Desabilitar SSL redirect — Cloudflare Tunnel ja garante HTTPS externamente
+# Cloudflare Tunnel garante HTTPS externamente
 # Internamente (Docker network) trafego e HTTP puro
 SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False  # Cloudflare garante HTTPS no edge
+CSRF_COOKIE_SECURE = False  # Trafego interno e HTTP
 
 # CSRF: confiar nos dominios do Cloudflare
 CSRF_TRUSTED_ORIGINS = [f"https://{host.strip()}" for host in ALLOWED_HOSTS if host.strip()]
