@@ -32,6 +32,7 @@ urlpatterns = [
     # Frontend templates (HTMX) — páginas de módulos
     path("transacao/", include("apps.transacao.urls_pages")),
     path("tpv/", include("apps.tpv.urls_pages")),
+    path("empresas/", include("apps.empresas.urls_pages")),
     path("comparador/", include("apps.comparador.urls_pages")),
     # Frontend templates (HTMX) — core (home, login, convites)
     path("", include("apps.core.urls")),

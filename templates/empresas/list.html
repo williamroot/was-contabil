@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Empresas — WAS Contabil{% endblock %}
+
+{% block content %}
+<div class="space-y-6" x-data="empresas()">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Empresas</h1>
+      <p class="mt-1 text-sm text-surface-500 dark:text-surface-400">Gerencie as empresas para simulacao</p>
+    </div>
+    <button @click="showModal = true"
+            class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-600 transition-all duration-200">
+      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+      Nova Empresa
+    </button>
+  </div>
+
+  <!-- Busca -->
+  <div class="relative">
+    <svg class="absolute left-3 top-2.5 h-4 w-4 text-surface-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.2-5.2m0 0A7.5 7.5 0 1 0 5.8 5.8a7.5 7.5 0 0 0 10 10Z"/></svg>
+    <input type="text" x-model="busca" @input.debounce.300ms="listar()" placeholder="Buscar por nome ou CNPJ..."
+           class="w-full pl-10 rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400 focus:border-brand-400 transition-colors">
+  </div>
+
+  <!-- Tabela -->
+  <div class="bg-white dark:bg-surface-800 rounded-xl shadow-sm border border-surface-200 dark:border-surface-700 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
+        <thead class="bg-surface-50 dark:bg-surface-900">
+          <tr>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">Empresa</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">CNPJ</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">Porte</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">Honorarios</th>
+            <th class="px-4 py-3 text-right text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">Acoes</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-100 dark:divide-surface-700">
+          <template x-for="emp in empresas" :key="emp.id">
+            <tr class="hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors">
+              <td class="px-4 py-3 text-sm font-medium text-surface-900 dark:text-white" x-text="emp.nome"></td>
+              <td class="px-4 py-3 text-sm text-surface-500 font-mono" x-text="emp.cnpj"></td>
+              <td class="px-4 py-3">
+                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                      :class="emp.porte === 'ME/EPP' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-300'"
+                      x-text="emp.porte"></span>
+              </td>
+              <td class="px-4 py-3 text-sm text-surface-500" x-text="emp.honorarios_percentual + '%'"></td>
+              <td class="px-4 py-3 text-right">
+                <button @click="excluir(emp.id)" class="text-red-500 hover:text-red-700 text-sm transition-colors">Excluir</button>
+              </td>
+            </tr>
+          </template>
+          <tr x-show="empresas.length === 0">
+            <td colspan="5" class="px-4 py-8 text-center text-sm text-surface-400">Nenhuma empresa cadastrada</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal Nova Empresa -->
+  <div x-show="showModal" x-cloak
+       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+       @click.self="showModal = false">
+    <div class="bg-white dark:bg-surface-800 rounded-2xl shadow-2xl border border-surface-200 dark:border-surface-700 w-full max-w-md mx-4 p-6"
+         @click.stop>
+      <h2 class="text-lg font-semibold text-surface-900 dark:text-white mb-4">Nova Empresa</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Nome</label>
+          <input type="text" x-model="novaEmpresa.nome" placeholder="Razao social"
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400 transition-colors">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">CNPJ</label>
+          <input type="text" x-model="novaEmpresa.cnpj" placeholder="00.000.000/0000-00"
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400 transition-colors">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Porte</label>
+          <select x-model="novaEmpresa.porte"
+                  class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400 transition-colors">
+            <option value="ME/EPP">ME / EPP</option>
+            <option value="DEMAIS">Demais Empresas</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">% Honorarios de Exito</label>
+          <input type="number" x-model="novaEmpresa.honorarios_percentual" min="0" max="100" step="0.01" placeholder="0"
+                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400 transition-colors">
+        </div>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button @click="showModal = false"
+                class="flex-1 rounded-lg border border-surface-300 dark:border-surface-600 px-4 py-2 text-sm font-medium text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors">
+          Cancelar
+        </button>
+        <button @click="criar()"
+                class="flex-1 rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600 transition-colors">
+          Cadastrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function empresas() {
+  return {
+    empresas: [],
+    busca: '',
+    showModal: false,
+    novaEmpresa: { nome: '', cnpj: '', porte: 'ME/EPP', honorarios_percentual: 0 },
+    csrfToken() {
+      return document.querySelector('[name=csrfmiddlewaretoken]')?.value
+        || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+    },
+    async init() { await this.listar(); },
+    async listar() {
+      const url = this.busca ? `/api/v1/empresas/?busca=${encodeURIComponent(this.busca)}` : '/api/v1/empresas/';
+      const res = await fetch(url);
+      if (res.ok) {
+        const data = await res.json();
+        this.empresas = data.results || data;
+      }
+    },
+    async criar() {
+      const res = await fetch('/api/v1/empresas/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.csrfToken() },
+        body: JSON.stringify(this.novaEmpresa),
+      });
+      if (res.ok) {
+        this.showModal = false;
+        this.novaEmpresa = { nome: '', cnpj: '', porte: 'ME/EPP', honorarios_percentual: 0 };
+        await this.listar();
+      }
+    },
+    async excluir(id) {
+      if (!confirm('Excluir esta empresa?')) return;
+      await fetch(`/api/v1/empresas/${id}/`, {
+        method: 'DELETE',
+        headers: { 'X-CSRFToken': this.csrfToken() },
+      });
+      await this.listar();
+    },
+  };
+}
+</script>
+{% endblock %}
