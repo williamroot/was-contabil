@@ -1,0 +1,132 @@
+{% extends "pdf/_pdf_base.html" %}
+{% load pdf_filters %}
+
+{% block content %}
+<h1>Relatorio de Transacao de Pequeno Valor (TPV)</h1>
+<p style="font-size: 8px; color: #666;">Ref.: Edital PGDAU 11/2025 | Lei 13.988/2020, art. 11, par. 2, I</p>
+
+<!-- CDAs Aptas -->
+<h2>CDAs Aptas</h2>
+{% if cdas_aptas %}
+<table>
+  <thead>
+    <tr>
+      <th>Numero</th>
+      <th class="text-right">Valor</th>
+      <th class="text-center">Data Inscricao</th>
+      <th class="text-center">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for cda in cdas_aptas %}
+    <tr>
+      <td>{{ cda.numero }}</td>
+      <td class="text-right">R$ {{ cda.valor|floatformat:2 }}</td>
+      <td class="text-center">{{ cda.data_inscricao }}</td>
+      <td class="text-center"><span class="badge badge-a">Apta</span></td>
+    </tr>
+    {% endfor %}
+    <tr style="font-weight: bold; border-top: 2px solid #1a1a2e;">
+      <td>Total CDAs Aptas</td>
+      <td class="text-right">R$ {{ total_cdas_aptas|floatformat:2 }}</td>
+      <td colspan="2"></td>
+    </tr>
+  </tbody>
+</table>
+{% else %}
+<p style="color: #999;">Nenhuma CDA apta para TPV.</p>
+{% endif %}
+
+<!-- CDAs Nao Aptas -->
+{% if cdas_nao_aptas %}
+<h2>CDAs Nao Aptas</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Numero</th>
+      <th class="text-right">Valor</th>
+      <th class="text-center">Data Inscricao</th>
+      <th class="text-center">Status</th>
+      <th>Motivos</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for cda in cdas_nao_aptas %}
+    <tr>
+      <td>{{ cda.numero }}</td>
+      <td class="text-right">R$ {{ cda.valor|floatformat:2 }}</td>
+      <td class="text-center">{{ cda.data_inscricao }}</td>
+      <td class="text-center"><span class="badge badge-d">Inapta</span></td>
+      <td style="font-size: 8px;">
+        {% for motivo in cda.validacao.motivos %}
+          {% if motivo == "valor_acima_limite" %}Valor acima do limite (60 SM){% endif %}
+          {% if motivo == "inscricao_inferior_1_ano" %}Inscricao inferior a 1 ano{% endif %}
+          {% if not forloop.last %}, {% endif %}
+        {% endfor %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<!-- Resultado Financeiro -->
+<h2>Resultado Financeiro</h2>
+<div class="grid-2">
+  <div class="card">
+    <div class="mb-4">Entrada (5%)</div>
+    <div class="amount">R$ {{ entrada|floatformat:2 }}</div>
+    <div style="font-size: 8px; color: #666;">
+      {{ parcelas_entrada }}x de R$ {{ valor_parcela_entrada|floatformat:2 }}
+    </div>
+  </div>
+  <div class="card">
+    <div class="mb-4">Desconto</div>
+    <div class="amount discount">{{ desconto|as_percent|floatformat:0 }}%</div>
+    <div style="font-size: 8px; color: #666;">sobre todo o saldo (inclusive principal)</div>
+  </div>
+  <div class="card">
+    <div class="mb-4">Saldo Apos Desconto</div>
+    <div class="amount">R$ {{ saldo|floatformat:2 }}</div>
+    <div style="font-size: 8px; color: #666;">
+      {{ parcelas_saldo }}x de R$ {{ valor_parcela_saldo|floatformat:2 }}
+    </div>
+  </div>
+  <div class="card">
+    <div class="mb-4">Valor Final</div>
+    <div class="amount">R$ {{ valor_final|floatformat:2 }}</div>
+    <div style="font-size: 8px; color: #27ae60; font-weight: bold;">
+      Economia: R$ {{ economia|floatformat:2 }}
+    </div>
+  </div>
+</div>
+
+<!-- Fluxo de Pagamento -->
+{% if fluxo %}
+<h2>Fluxo de Pagamento</h2>
+<table>
+  <thead>
+    <tr>
+      <th class="text-center">#</th>
+      <th>Tipo</th>
+      <th class="text-right">Valor</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in fluxo %}
+    <tr>
+      <td class="text-center">{{ item.numero }}</td>
+      <td>
+        {% if item.tipo == "entrada" %}
+          <span class="badge badge-entrada">Entrada</span>
+        {% else %}
+          <span class="badge badge-parcela">Saldo</span>
+        {% endif %}
+      </td>
+      <td class="text-right">R$ {{ item.valor|floatformat:2 }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}

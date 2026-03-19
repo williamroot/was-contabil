@@ -1,0 +1,152 @@
+{% extends "pdf/_pdf_base.html" %}
+{% load pdf_filters %}
+
+{% block content %}
+<h1>Simulacao Avancada de Transacao Tributaria</h1>
+
+<!-- Rating Badge -->
+<div class="card" style="text-align: center;">
+  <div style="font-size: 11px; color: #666; margin-bottom: 4px;">Rating CAPAG</div>
+  <span class="badge badge-{{ rating|lower }}" style="font-size: 14px; padding: 4px 16px;">
+    {{ rating }}
+  </span>
+  <div style="font-size: 9px; color: #999; margin-top: 4px;">
+    Ref.: Portaria PGFN 6.757/2022, art. 24
+  </div>
+</div>
+
+<!-- Resumo do Passivo -->
+<h2>Resumo do Passivo</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Origem</th>
+      <th class="text-right">Valor</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Passivo RFB</td>
+      <td class="text-right">R$ {{ passivos.rfb|floatformat:2 }}</td>
+    </tr>
+    <tr>
+      <td>Passivo PGFN</td>
+      <td class="text-right">R$ {{ passivos.pgfn|floatformat:2 }}</td>
+    </tr>
+    <tr style="font-weight: bold; border-top: 2px solid #1a1a2e;">
+      <td>Total Consolidado</td>
+      <td class="text-right">R$ {{ passivos.total|floatformat:2 }}</td>
+    </tr>
+    <tr>
+      <td class="discount bold">Saldo apos Desconto (PGFN)</td>
+      <td class="text-right discount bold">R$ {{ passivos.saldo|floatformat:2 }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Desconto por Componente -->
+<h2>Desconto por Componente</h2>
+<p style="font-size: 8px; color: #666;">
+  Regime: <strong>{% if is_me_epp %}ME/EPP/PF{% else %}Demais Contribuintes{% endif %}</strong> |
+  Desconto: <strong>{{ desconto_percentual|as_percent|floatformat:1 }}%</strong> sobre multa, juros e encargos
+  (Lei 13.988/2020, art. 11, par. 2, I &mdash; principal preservado)
+</p>
+
+<!-- Previdenciario -->
+<table>
+  <thead>
+    <tr>
+      <th>Categoria</th>
+      <th class="text-right">Principal</th>
+      <th class="text-right">Multa</th>
+      <th class="text-right">Juros</th>
+      <th class="text-right">Encargos</th>
+      <th class="text-right">Desconto</th>
+      <th class="text-right">Total Final</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="badge badge-entrada">Prev</span> {{ previdenciario.nome }}</td>
+      <td class="text-right">R$ {{ previdenciario.desconto_result.principal_final|floatformat:2 }}</td>
+      <td class="text-right">R$ {{ previdenciario.desconto_result.multa_final|floatformat:2 }}</td>
+      <td class="text-right">R$ {{ previdenciario.desconto_result.juros_final|floatformat:2 }}</td>
+      <td class="text-right">R$ {{ previdenciario.desconto_result.encargos_final|floatformat:2 }}</td>
+      <td class="text-right discount">-R$ {{ previdenciario.desconto_result.total_desconto|floatformat:2 }}</td>
+      <td class="text-right bold">R$ {{ previdenciario.desconto_result.total_final|floatformat:2 }}</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-parcela">Trib</span> {{ tributario.nome }}</td>
+      <td class="text-right">R$ {{ tributario.desconto_result.principal_final|floatformat:2 }}</td>
+      <td class="text-right">R$ {{ tributario.desconto_result.multa_final|floatformat:2 }}</td>
+      <td class="text-right">R$ {{ tributario.desconto_result.juros_final|floatformat:2 }}</td>
+      <td class="text-right">R$ {{ tributario.desconto_result.encargos_final|floatformat:2 }}</td>
+      <td class="text-right discount">-R$ {{ tributario.desconto_result.total_desconto|floatformat:2 }}</td>
+      <td class="text-right bold">R$ {{ tributario.desconto_result.total_final|floatformat:2 }}</td>
+    </tr>
+    {% if simples %}
+    <tr>
+      <td><span class="badge badge-c">SN</span> {{ simples.nome }}</td>
+      <td class="text-right">R$ {{ simples.desconto_result.principal_final|floatformat:2 }}</td>
+      <td class="text-right">R$ {{ simples.desconto_result.multa_final|floatformat:2 }}</td>
+      <td class="text-right">R$ {{ simples.desconto_result.juros_final|floatformat:2 }}</td>
+      <td class="text-right">R$ {{ simples.desconto_result.encargos_final|floatformat:2 }}</td>
+      <td class="text-right discount">-R$ {{ simples.desconto_result.total_desconto|floatformat:2 }}</td>
+      <td class="text-right bold">R$ {{ simples.desconto_result.total_final|floatformat:2 }}</td>
+    </tr>
+    {% endif %}
+  </tbody>
+</table>
+
+<!-- Parcelamento Resumido -->
+<h2>Parcelamento</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Categoria</th>
+      <th class="text-center">Prazo Total</th>
+      <th class="text-center">Entrada</th>
+      <th class="text-center">Parcelas</th>
+      <th class="text-right">Saldo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{ previdenciario.nome }}</td>
+      <td class="text-center">{{ previdenciario.prazo_total }} meses</td>
+      <td class="text-center">{{ previdenciario.entrada }} parcelas</td>
+      <td class="text-center">{{ previdenciario.parcelas }} parcelas</td>
+      <td class="text-right">R$ {{ previdenciario.saldo|floatformat:2 }}</td>
+    </tr>
+    <tr>
+      <td>{{ tributario.nome }}</td>
+      <td class="text-center">{{ tributario.prazo_total }} meses</td>
+      <td class="text-center">{{ tributario.entrada }} parcelas</td>
+      <td class="text-center">{{ tributario.parcelas }} parcelas</td>
+      <td class="text-right">R$ {{ tributario.saldo|floatformat:2 }}</td>
+    </tr>
+    {% if simples %}
+    <tr>
+      <td>{{ simples.nome }}</td>
+      <td class="text-center">{{ simples.prazo_total }} meses</td>
+      <td class="text-center">{{ simples.entrada }} parcelas</td>
+      <td class="text-center">{{ simples.parcelas }} parcelas</td>
+      <td class="text-right">R$ {{ simples.saldo|floatformat:2 }}</td>
+    </tr>
+    {% endif %}
+  </tbody>
+</table>
+
+<!-- Resultado -->
+<h2>Resultado</h2>
+<div class="grid-2">
+  <div class="card">
+    <div class="mb-4">Desconto Total</div>
+    <div class="amount discount">- R$ {{ desconto_efetivo|floatformat:2 }}</div>
+  </div>
+  <div class="card">
+    <div class="mb-4">Honorarios de Exito ({{ honorarios_percentual|as_percent|floatformat:0 }}%)</div>
+    <div class="amount">R$ {{ honorarios|floatformat:2 }}</div>
+  </div>
+</div>
+{% endblock %}

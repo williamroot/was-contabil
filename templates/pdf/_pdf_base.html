@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { size: A4; margin: 20mm; }
+  body { font-family: Arial, sans-serif; font-size: 10px; color: #333; }
+  h1 { color: #1a1a2e; font-size: 18px; border-bottom: 3px solid #d4a843; padding-bottom: 6px; }
+  h2 { color: #d4a843; font-size: 13px; margin-top: 15px; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 9px; }
+  th { background: #1a1a2e; color: white; padding: 5px; text-align: left; }
+  td { padding: 4px 5px; border-bottom: 1px solid #eee; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 8px; font-weight: bold; color: white; }
+  .badge-a { background: #27ae60; } .badge-b { background: #f39c12; }
+  .badge-c { background: #e67e22; } .badge-d { background: #e74c3c; }
+  .badge-entrada { background: #d4a843; } .badge-parcela { background: #3498db; }
+  .card { border: 1px solid #e0e0e0; border-radius: 4px; padding: 8px; margin: 5px 0; }
+  .amount { font-size: 16px; font-weight: bold; color: #1a1a2e; }
+  .discount { color: #27ae60; }
+  .footer { margin-top: 20px; border-top: 1px solid #ddd; padding-top: 8px; font-size: 8px; color: #999; text-align: center; }
+  .disclaimer { background: #fff3cd; border: 1px solid #ffc107; padding: 8px; font-size: 8px; margin-top: 15px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .text-right { text-align: right; }
+  .text-center { text-align: center; }
+  .mb-4 { margin-bottom: 4px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mt-8 { margin-top: 8px; }
+  .bold { font-weight: bold; }
+</style>
+</head>
+<body>
+{% block content %}{% endblock %}
+<div class="disclaimer">
+  <strong>Aviso Legal:</strong> Esta simulacao tem carater meramente informativo e nao constitui
+  proposta formal de transacao tributaria. Os valores apresentados sao estimativas baseadas na
+  legislacao vigente (Lei 13.988/2020, Portaria PGFN 6.757/2022) e podem variar conforme
+  atualizacoes normativas, correcao monetaria (SELIC) e analise individual pela PGFN.
+  Consulte um profissional habilitado antes de tomar decisoes.
+</div>
+<div class="footer">WAS Contabil &mdash; Simulador de Transacao Tributaria | {{ data_geracao }}</div>
+</body>
+</html>

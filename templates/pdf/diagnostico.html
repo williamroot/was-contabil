@@ -1,0 +1,103 @@
+{% extends "pdf/_pdf_base.html" %}
+
+{% block content %}
+<h1>Diagnostico Previo de Transacao Tributaria</h1>
+
+<!-- Resumo -->
+<h2>Resumo Financeiro</h2>
+<div class="grid-2">
+  <div class="card">
+    <div class="mb-4">Divida Original</div>
+    <div class="amount">R$ {{ valor_original|floatformat:2 }}</div>
+  </div>
+  <div class="card">
+    <div class="mb-4">Desconto Aplicado</div>
+    <div class="amount discount">- R$ {{ valor_desconto|floatformat:2 }}</div>
+  </div>
+  <div class="card">
+    <div class="mb-4">Valor com Desconto</div>
+    <div class="amount">R$ {{ valor_com_desconto|floatformat:2 }}</div>
+  </div>
+  <div class="card">
+    <div class="mb-4">Entrada (6%)</div>
+    <div class="amount">R$ {{ valor_entrada|floatformat:2 }}</div>
+    <div style="font-size: 8px; color: #666;">{{ num_parcelas_entrada }}x de R$ {{ valor_parcela_entrada|floatformat:2 }}</div>
+  </div>
+</div>
+
+<p style="font-size: 9px; color: #666; margin-top: 4px;">
+  Classificacao: <strong>{{ classificacao }}</strong> |
+  Regime: <strong>{% if is_me_epp %}ME/EPP/PF{% else %}Demais Contribuintes{% endif %}</strong> |
+  Previdenciario: <strong>{{ percentual_previdenciario }}%</strong>
+</p>
+
+<!-- Modalidades: Previdenciario vs Nao Previdenciario -->
+<h2>Parcelamento por Modalidade</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Modalidade</th>
+      <th class="text-right">Saldo</th>
+      <th class="text-center">Parcelas</th>
+      <th class="text-right">Valor Parcela</th>
+      <th class="text-center">Prazo Max.</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for mod in modalidades %}
+    <tr>
+      <td>
+        {% if mod.is_previdenciario %}
+          <span class="badge badge-entrada">Prev</span>
+        {% else %}
+          <span class="badge badge-parcela">Nao Prev</span>
+        {% endif %}
+        {{ mod.nome }}
+      </td>
+      <td class="text-right">R$ {{ mod.valor|floatformat:2 }}</td>
+      <td class="text-center">{{ mod.num_parcelas }}</td>
+      <td class="text-right">R$ {{ mod.valor_parcela|floatformat:2 }}</td>
+      <td class="text-center">{{ mod.prazo_maximo }} meses</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Fluxo de Parcelas -->
+{% if fluxo %}
+<h2>Fluxo de Pagamento</h2>
+<table>
+  <thead>
+    <tr>
+      <th class="text-center">Parcela</th>
+      <th>Tipo</th>
+      <th class="text-right">Valor</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in fluxo|slice:":24" %}
+    <tr>
+      <td class="text-center">{{ item.parcela }}</td>
+      <td>
+        {% if item.tipo == "entrada" %}
+          <span class="badge badge-entrada">Entrada</span>
+        {% else %}
+          <span class="badge badge-parcela">Parcela</span>
+        {% endif %}
+      </td>
+      <td class="text-right">R$ {{ item.valor|floatformat:2 }}</td>
+    </tr>
+    {% endfor %}
+    {% with total_fluxo=fluxo|length %}
+    {% if total_fluxo > 24 %}
+    <tr>
+      <td colspan="3" class="text-center" style="font-style: italic; color: #999;">
+        ... e mais {{ total_fluxo|add:"-24" }} parcelas
+      </td>
+    </tr>
+    {% endif %}
+    {% endwith %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}
