@@ -1,3 +1,4 @@
+{% load static %}
 <!-- Navbar responsiva: dark bg, hamburger mobile, Alpine.js toggle -->
 <nav class="bg-surface-900 text-white shadow-lg" x-data="{ mobileOpen: false }">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -5,8 +6,9 @@
 
       <!-- Logo -->
       <div class="flex-shrink-0">
-        <a href="{% url 'core:home' %}" class="flex items-center gap-2 group">
-          <span class="text-brand-400 font-bold text-xl tracking-tight group-hover:text-brand-300 transition-colors duration-200">
+        <a href="{% url 'core:home' %}" class="flex items-center gap-2.5 group">
+          <img src="{% static 'favicon.svg' %}" alt="" class="h-8 w-8">
+          <span class="text-brand-400 font-bold text-lg tracking-tight group-hover:text-brand-300 transition-colors duration-200">
             WAS Contábil
           </span>
         </a>
