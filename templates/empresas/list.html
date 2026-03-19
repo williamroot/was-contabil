@@ -10,7 +10,7 @@
       <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Empresas</h1>
       <p class="mt-1 text-sm text-surface-500 dark:text-surface-400">Gerencie as empresas para simulacao</p>
     </div>
-    <button @click="showModal = true; cnpjInfo = null; modoManual = false; novaEmpresa = { nome: '', cnpj: '', porte: 'ME/EPP', honorarios_percentual: 0 }"
+    <button @click="showModal = true; cnpjInfo = null; modoManual = false; buscandoCnpj = false; lastCnpj = ''; novaEmpresa = { nome: '', cnpj: '', porte: 'ME/EPP', honorarios_percentual: 0 }"
             class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-600 transition-all duration-200">
       <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
       Nova Empresa
@@ -64,9 +64,9 @@
   <!-- Modal Nova Empresa -->
   <div x-show="showModal" x-cloak
        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-       @click.self="showModal = false">
+       @mousedown.self="showModal = false">
     <div class="bg-white dark:bg-surface-800 rounded-2xl shadow-2xl border border-surface-200 dark:border-surface-700 w-full max-w-md mx-4 p-6"
-         @click.stop>
+         @mousedown.stop>
       <h2 class="text-lg font-semibold text-surface-900 dark:text-white mb-1">Nova Empresa</h2>
       <p class="text-xs text-surface-400 mb-5">Digite o CNPJ para preencher automaticamente ou <button type="button" @click="modoManual = true; cnpjInfo = null" class="text-brand-400 hover:text-brand-300 underline">preencher manualmente</button>.</p>
 
@@ -74,9 +74,30 @@
         <!-- CNPJ — sempre primeiro e editavel -->
         <div>
           <label class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">CNPJ</label>
-          <input type="text" x-model="novaEmpresa.cnpj" placeholder="00.000.000/0000-00" data-mask="cnpj" autofocus
-                 @blur="if(!modoManual) cnpjLookup($el, (d) => { novaEmpresa.nome = d.nome; novaEmpresa.porte = d.porte; cnpjInfo = d; })"
-                 class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-400 transition-colors">
+          <div class="relative">
+            <input type="text" x-model="novaEmpresa.cnpj" placeholder="00.000.000/0000-00" data-mask="cnpj" autofocus
+                   @input="
+                     let digits = ($el.value || '').replace(/\D/g, '');
+                     if (digits.length === 14 && !modoManual && digits !== lastCnpj) {
+                       lastCnpj = digits;
+                       buscandoCnpj = true;
+                       cnpjLookup($el, (d) => {
+                         novaEmpresa.nome = d.nome;
+                         novaEmpresa.porte = d.porte;
+                         cnpjInfo = d;
+                         buscandoCnpj = false;
+                       }).catch(() => { buscandoCnpj = false; });
+                     }
+                   "
+                   class="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-400 transition-colors">
+            <!-- Loading indicator -->
+            <div x-show="buscandoCnpj" class="absolute right-3 top-2.5">
+              <svg class="animate-spin h-5 w-5 text-brand-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+          </div>
         </div>
 
         <!-- Resultado da consulta -->
@@ -146,6 +167,8 @@ function empresas() {
     novaEmpresa: { nome: '', cnpj: '', porte: 'ME/EPP', honorarios_percentual: 0 },
     cnpjInfo: null,
     modoManual: false,
+    buscandoCnpj: false,
+    lastCnpj: '',
     csrfToken() {
       return document.querySelector('[name=csrfmiddlewaretoken]')?.value
         || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
